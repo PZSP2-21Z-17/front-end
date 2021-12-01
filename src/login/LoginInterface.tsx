@@ -17,14 +17,14 @@ export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
 
     const handleSubmit = (event: any) => {
         event.preventDefault();
-        FetchAPI.fetchPost('login/', form, () => {});
+        FetchAPI.fetchPost('user/login/', form, (json: any) => {console.log(json)});
     }
 
     let loginForm = (
         <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formLoginUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control type="text" placeholder="Enter username" className="w-25" onChange={e => setField('username', e.target.value)}/>
+                <Form.Label>E-mail</Form.Label>
+                <Form.Control type="text" placeholder="Enter e-mail" className="w-25" onChange={e => setField('e_mail', e.target.value)}/>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formLoginPassword">
