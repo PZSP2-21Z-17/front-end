@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import download from 'downloadjs';
 import generatePdf from './PdfGenerator';
 import { nullOf } from '../Common';
+import Button from 'react-bootstrap/Button';
 
 type PdfUserInterfaceProps = {
     customText: string;
@@ -23,16 +24,16 @@ export const PdfUserInterface: FunctionComponent<PdfUserInterfaceProps> = ({cust
     let downloadButton = null;
     if (generatedPdf) {
         downloadButton = (
-            <button onClick={onClickDownload}>
+            <Button variant="primary" className="mr-1" onClick={onClickDownload}>
                 Download PDF
-            </button>
+            </Button>
         );
     }
 
     return <>
-        <button onClick={onClickGenerate}>
+        <Button variant="secondary" className="mr-1" onClick={onClickGenerate}>
             Generate PDF
-        </button>{' '}
+        </Button>
         {isGenerating ? <span>Generating...</span> : downloadButton}
     </>;
 }
