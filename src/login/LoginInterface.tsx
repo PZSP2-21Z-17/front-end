@@ -2,26 +2,36 @@ import React, { FunctionComponent, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
+import ReactSession from '../ReactSession';
 
-type LoginInterfaceProps = {
-    
-};
+type LoginInterfaceProps = {};
 
 export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
     const [form, setForm] = useState({});
+
+    let isLogged = ReactSession.checkValue('username');
 
     const setField = (key: any, value: any) => {
         setForm({...form, [key]: value})
     }
 
-    const handleSubmit = (event: any) => {
+    const handleLoginSubmit = (event: any) => {
         event.preventDefault();
-        FetchAPI.fetchPost('user/login/', form, (json: any) => {console.log(json)});
+        if (!isLogged) {
+            FetchAPI.fetchPost('user/login/', form, (json: any) => {ReactSession.setValue('username', json['e_mail'])});
+            refresh();
+        }
+    }
+
+    const logout = () => {
+        ReactSession.removeValue('username');
+        refresh();
     }
 
     let loginForm = (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3" controlId="formLoginUsername">
                 <Form.Label>E-mail</Form.Label>
                 <Form.Control type="text" placeholder="Enter e-mail" className="w-25" onChange={e => setField('e_mail', e.target.value)}/>
@@ -37,9 +47,21 @@ export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
         </Form>
     )
 
+    let userMessage = isLogged ? (
+        <>You are logged in as {ReactSession.getValue('username')}.</>
+    ) : (<>You are not logged in.</>);
+
+    let logoutButton = isLogged ? (
+        <Button variant="danger" className="mb-3" onClick={e => logout()}>
+            Logout
+        </Button>
+    ) : (<></>);
+
     return <>
         <div className="p-5">
-        {loginForm}
+            {userMessage}
+            {loginForm}
+            {logoutButton}
         </div>
     </>;
 }
