@@ -1,6 +1,6 @@
-import React, { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import download from 'downloadjs';
-import generatePdf from './PdfGenerator';
+import generatePdf from '../pdf/PdfGenerator';
 import { nullOf } from '../Common';
 import Button from 'react-bootstrap/Button';
 
@@ -31,6 +31,7 @@ export const PdfUserInterface: FunctionComponent<PdfUserInterfaceProps> = ({cust
     }
 
     return <>
+        <p>Custom text: <pre>{customText}</pre></p>
         <Button variant="secondary" className="mr-1" onClick={onClickGenerate}>
             Generate PDF
         </Button>
