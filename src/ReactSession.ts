@@ -1,11 +1,11 @@
 // Partially adapted for TypeScript from https://github.com/grizzthedj/react-session
 
 export class ReactSession {
-    static SESSION: string = "__react_session__";
-    static EXPIRE: number = 15;
+    static session: string = "__react_session__";
+    static expire: number = 15;
 
     static getCookie() {
-        let name = ReactSession.SESSION + '=';
+        let name = ReactSession.session + '=';
         let bigCookie = decodeURIComponent(document.cookie);
         let cookies = bigCookie.split(';');
 
@@ -24,7 +24,7 @@ export class ReactSession {
 
     static getUpdatedTime(){
         var now = new Date();
-        now.setTime(now.getTime() + (ReactSession.EXPIRE  * 60 * 1000));
+        now.setTime(now.getTime() + (ReactSession.expire  * 60 * 1000));
         return now.toUTCString();
     }
 
@@ -46,7 +46,7 @@ export class ReactSession {
         }
         cookie[key] = value;
 
-        cookieString = ReactSession.SESSION + '=' + JSON.stringify(cookie) + ';expires=' + ReactSession.getUpdatedTime() + ';path=/';
+        cookieString = ReactSession.session + '=' + JSON.stringify(cookie) + ';expires=' + ReactSession.getUpdatedTime() + ';path=/';
         document.cookie = cookieString;
     };
 
@@ -59,7 +59,7 @@ export class ReactSession {
             delete cookie[key];
         }
 
-        cookieString = ReactSession.SESSION + '=' + JSON.stringify(cookie) + ';expires=' + ReactSession.getUpdatedTime() + ';path=/';
+        cookieString = ReactSession.session + '=' + JSON.stringify(cookie) + ';expires=' + ReactSession.getUpdatedTime() + ';path=/';
         document.cookie = cookieString;
     };
 }

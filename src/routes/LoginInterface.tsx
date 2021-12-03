@@ -20,17 +20,14 @@ export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
         if (!isLogged) {
-            FetchAPI.fetchPost('user/login/', form, (json: any) => {ReactSession.setValue('username', json['e_mail'])});
+            FetchAPI.fetchPost('user/login/', form).then(
+                (json: any) => {ReactSession.setValue('username', json['e_mail'])}
+            )
             refresh();
         }
     }
 
-    const logout = () => {
-        ReactSession.removeValue('username');
-        refresh();
-    }
-
-    let loginForm = (
+    let loginForm = !isLogged ? (<>
         <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3" controlId="formLoginUsername">
                 <Form.Label>E-mail</Form.Label>
@@ -45,23 +42,16 @@ export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
                 Log In
             </Button>
         </Form>
-    )
+    </>) : (<></>);
 
-    let userMessage = isLogged ? (
-        <>You are logged in as {ReactSession.getValue('username')}.</>
-    ) : (<>You are not logged in.</>);
-
-    let logoutButton = isLogged ? (
-        <Button variant="danger" className="mb-3" onClick={e => logout()}>
-            Logout
-        </Button>
-    ) : (<></>);
+    let userMessage = isLogged ? (<>
+        You are logged in as {ReactSession.getValue('username')}.
+    </>) : (<>You are not logged in.</>);
 
     return <>
         <div className="p-5">
             {userMessage}
             {loginForm}
-            {logoutButton}
         </div>
     </>;
 }
