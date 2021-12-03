@@ -1,21 +1,23 @@
 export class FetchAPI {
-    static address = 'http://127.0.0.1:8000/';
+    static readonly address = 'http://127.0.0.1:8000/';
 
-    static fetchGet = async (route: string, func: Function) => {
-        return fetch(FetchAPI.address + route
+    static fetchGet = async (route: string) => {
+        const url = new URL(route, FetchAPI.address).toString();
+        return fetch(url
         ).then(
-            res => {console.log(res); res.json();}
-        ).then(
-            func(), (error) => {console.log(error)}
+            res => res.json()
+        ).catch(
+            error => console.log(error)
         );
     };
 
-    static fetchPost = async (route: string, data: {}, func: Function) => {
-        return fetch(FetchAPI.address + route, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
+    static fetchPost = async (route: string, data: {}) => {
+        const url = new URL(route, FetchAPI.address).toString();
+        return fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
         ).then(
             res => res.json()
-        ).then(
-            res => func(res), (error) => {console.log(error)}
+        ).catch(
+            error => console.log(error)
         );
     };
 
