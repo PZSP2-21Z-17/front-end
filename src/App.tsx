@@ -1,6 +1,8 @@
 import { Link, Outlet } from 'react-router-dom';
 import { JournalText, Question, Hash } from 'react-bootstrap-icons';
+
 import ReactSession from './ReactSession';
+import { refresh } from './Common';
 
 let userOptions = (ReactSession.checkValue('username')) ? (<>
     <li className="nav-item">
@@ -10,7 +12,7 @@ let userOptions = (ReactSession.checkValue('username')) ? (<>
         <Link className="nav-link" to="/user">User</Link>
     </li>
     <li className="nav-item">
-        <Link className="nav-link" to="/logout">Logout</Link>
+        <Link className="nav-link" to="/" onClick={() => {ReactSession.removeValue('username'); refresh();}}>Logout</Link>
     </li>
 </>) : (<>
     <li className="nav-item">

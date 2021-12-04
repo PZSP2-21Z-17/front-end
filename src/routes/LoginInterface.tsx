@@ -21,9 +21,11 @@ export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
         event.preventDefault();
         if (!isLogged) {
             FetchAPI.fetchPost('user/login/', form).then(
-                (json: any) => {ReactSession.setValue('username', json['e_mail'])}
+                (json: any) => {
+                    ReactSession.setValue('username', json['e_mail']);
+                    refresh();
+                }
             )
-            refresh();
         }
     }
 
