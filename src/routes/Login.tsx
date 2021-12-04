@@ -6,9 +6,9 @@ import { refresh, addToDict } from '../Common'
 import FetchAPI from '../FetchAPI';
 import ReactSession from '../ReactSession';
 
-type LoginInterfaceProps = {};
+type LoginProps = {};
 
-export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
+export const Login: FunctionComponent<LoginProps> = () => {
     const [form, setForm] = useState({});
 
     let isLogged = ReactSession.checkValue('username');
@@ -54,4 +54,4 @@ export const LoginInterface: FunctionComponent<LoginInterfaceProps> = () => {
     </>;
 }
 
-export default LoginInterface;
+export default Login;
