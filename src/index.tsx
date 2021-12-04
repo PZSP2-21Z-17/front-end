@@ -11,7 +11,7 @@ import Exams from './routes/Exams';
 import Questions from './routes/Questions';
 import Tags from './routes/Tags';
 import PdfUserInterface from './routes/PdfUserInterface';
-import LoginInterface from './routes/LoginInterface';
+import Login from './routes/Login';
 import User from './routes/User';
 
 ReactDOM.render(
@@ -24,8 +24,8 @@ ReactDOM.render(
           <Route path="questions" element={<Questions />} />
           <Route path="tags" element={<Tags />} />
           <Route path="pdfgen" element={<PdfUserInterface customText={'custom text'} />} />
-          <Route path="login" element={<LoginInterface />} />
-          <Route path="register" element={<LoginInterface />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Login />} />
           <Route path="user" element={<User />} />
           <Route path="*" element={<NotFound />} />
         </Route>
