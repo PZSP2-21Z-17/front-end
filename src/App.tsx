@@ -1,6 +1,28 @@
 import { Link, Outlet } from 'react-router-dom';
 import { JournalText, Question, Hash } from 'react-bootstrap-icons';
 
+import ReactSession from './ReactSession';
+import { refresh } from './Common';
+
+let userOptions = (ReactSession.checkValue('username')) ? (<>
+    <li className="nav-item">
+        You are logged in as {ReactSession.getValue('username')}.
+    </li>
+    <li className="nav-item">
+        <Link className="nav-link" to="/user">User</Link>
+    </li>
+    <li className="nav-item">
+        <Link className="nav-link" to="/" onClick={() => {ReactSession.removeValue('username'); refresh();}}>Logout</Link>
+    </li>
+</>) : (<>
+    <li className="nav-item">
+        <Link className="nav-link" to="/login">Login</Link>
+    </li>
+    <li className="nav-item">
+        <Link className="nav-link" to="/register">Register</Link>
+    </li>
+</>)
+
 export const App = () => {
     return (
         <div id="container" className="container-fluid vh-100 p-0 d-flex flex-column">
@@ -8,15 +30,7 @@ export const App = () => {
                 <Link className="navbar-brand mb-2" to="/">Front end</Link>
                 <div className="d-flex flex-row-reverse w-100 mb-2">
                     <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/login">Login</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/register">Register</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/logout">Logout</Link>
-                        </li>
+                        {userOptions}
                     </ul>
                 </div>
             </header>

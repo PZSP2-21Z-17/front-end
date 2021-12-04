@@ -3,3 +3,5 @@ export const fetchText = async (url: string) => await fetch(url).then((result) =
 
 export const nullOf = <T>(obj: T) => null as unknown as T;
 export const undefinedOf = <T>(obj: T) => undefined as unknown as T;
+
+export const refresh = () => window.location.reload();
