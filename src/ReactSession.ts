@@ -1,8 +1,8 @@
 // Partially adapted for TypeScript from https://github.com/grizzthedj/react-session
 
 export class ReactSession {
-    static session: string = "__react_session__";
-    static expire: number = 15;
+    static readonly session: string = "__react_session__";
+    static readonly expire: number = 15;
 
     static getCookie() {
         let name = ReactSession.session + '=';

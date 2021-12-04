@@ -13,7 +13,6 @@ import Tags from './routes/Tags';
 import PdfUserInterface from './routes/PdfUserInterface';
 import LoginInterface from './routes/LoginInterface';
 import User from './routes/User';
-import Logout from './routes/Logout';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -25,7 +24,6 @@ ReactDOM.render(
           <Route path="questions" element={<Questions />} />
           <Route path="tags" element={<Tags />} />
           <Route path="pdfgen" element={<PdfUserInterface customText={'custom text'} />} />
-          <Route path="logout" element={<Logout />} />
           <Route path="login" element={<LoginInterface />} />
           <Route path="register" element={<LoginInterface />} />
           <Route path="user" element={<User />} />
