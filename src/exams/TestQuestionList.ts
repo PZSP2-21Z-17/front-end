@@ -1,4 +1,4 @@
-import Question from "../questions/Question";
+import Question from "../entities/Question";
 
 export const TestQuestionList: Question[] = [
     {

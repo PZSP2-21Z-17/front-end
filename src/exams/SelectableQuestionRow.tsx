@@ -1,5 +1,5 @@
 import { FunctionComponent, ChangeEvent } from 'react';
-import Question from '../questions/Question';
+import Question from '../entities/Question';
 
 export type SelectableQuestionRowProps = {
     selected: boolean;

@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import TestQuestionList from '../exams/TestQuestionList';
+import Question, * as QuestionUtils from '../entities/Question';
 import SelectableQuestionRow from '../exams/SelectableQuestionRow';
 import { indexToLetter } from '../Common';
 import { Row, Col, Button, Form, FormLabel, FormGroup, FormControl, Table } from 'react-bootstrap';
+import FetchAPI from '../FetchAPI';
 
 export const Exams = () => {
-    const questions = TestQuestionList;
+    const [questions, setQuestions] = useState([] as Question[]);
     const [questionSelection, setQuestionSelection] = useState(questions.map(() => true));
     const [title, setTitle] = useState('Exam');
     const [variantCount, setVariantCount] = useState(1);
@@ -32,6 +33,11 @@ export const Exams = () => {
             <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
             <script>window.texme = { style: 'plain' }</script>
             <script src="https://cdn.jsdelivr.net/npm/texme@1.0.0"></script>
+            <style>
+                textarea { visibility: hidden; }
+                #loader { display: none; width: 75px; }
+                textarea + #loader { display: block; }
+            </style>
             <textarea>
 # ${title}
 
@@ -39,6 +45,7 @@ ${quotedPreface}
 
 ${flattenedQuestions}
             </textarea>
+            <img id="loader" src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif">
         `);
         iframeDocument.close();
         setTimeout(() => setDownloadDisabled(false), 500);  // TODO: user a proper debounce function
@@ -60,6 +67,15 @@ ${flattenedQuestions}
             questions[index].id === questionId ? newSelected : oldSelected));
     };
 
+    useEffect(() => {
+        FetchAPI.fetchGet('/group/answers/1/1').then(result => {
+            setQuestions(result.task_affs.map((taskAff: any) => QuestionUtils.fromFetched(taskAff.tasks)));
+            console.log(result.task_affs.map((taskAff: any) => QuestionUtils.fromFetched(taskAff.tasks)));
+        });
+    }, []);
+    useEffect(() => {
+        setQuestionSelection(questions.map(() => true));
+    }, [questions]);
     useEffect(generateDocument, [questions, questionSelection, title, preface]);
     useEffect(() => {
         if (checkboxRef.current == null) return;
@@ -84,7 +100,7 @@ ${flattenedQuestions}
                         </Col>
                     </FormGroup>
                     <FormGroup className="mb-1" as={Row} controlId="exam-preface">
-                        <FormLabel column sm={3}>Title</FormLabel>
+                        <FormLabel column sm={3}>Preface</FormLabel>
                         <Col sm={9}>
                             <FormControl as="textarea" value={preface} onChange={evt => setPreface(evt.target.value)} />
                         </Col>
@@ -95,7 +111,7 @@ ${flattenedQuestions}
                 <Table hover className="w-100" style={{ maxHeight: '100vh', overflow: 'auto' }}>
                 <thead>
                     <tr>
-                        <th className="border-end">
+                        <th className="border-end" style={{ textAlign: "center", maxWidth: '40px' }}>
                             <input ref={checkboxRef} type="checkbox" checked={questionSelection.every(sel => sel)}
                                 onChange={evt => setQuestionSelection(questionSelection.map(sel => evt.target.checked))} />
                         </th>
