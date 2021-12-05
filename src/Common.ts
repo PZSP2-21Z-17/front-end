@@ -11,3 +11,5 @@ export const setDict = (dictSetter: any, object: any) => dictSetter(object);
 
 export const addToArray = (arraySetter: any, array: any, object: any) => arraySetter([...array, object]);
 export const setArray = (arraySetter: any, object: any) => arraySetter(object);
+
+export const indexToLetter = (index: number) => String.fromCharCode(97 + index % 26);
