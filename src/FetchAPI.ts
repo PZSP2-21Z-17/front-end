@@ -11,7 +11,7 @@ export class FetchAPI {
         );
     };
 
-    static fetchPost = async (route: string, data: {}) => {
+    static fetchPost = async (route: string, data: any) => {
         const url = new URL(route, FetchAPI.address).toString();
         return fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
         ).then(

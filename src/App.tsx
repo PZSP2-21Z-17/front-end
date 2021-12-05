@@ -1,5 +1,5 @@
 import { Link, Outlet } from 'react-router-dom';
-import { JournalText, Question, Hash } from 'react-bootstrap-icons';
+import { JournalText, Question, Hash, BookHalf } from 'react-bootstrap-icons';
 
 import ReactSession from './ReactSession';
 import { refresh } from './Common';
@@ -37,6 +37,12 @@ export const App = () => {
             <div className="flex-grow-1 d-flex">
                 <nav className="bg-secondary" style={{ width: '280px' }}>
                     <ul className="nav nav-pills flex-column mb-auto">
+                        <li className="nav-item">
+                            <Link className="nav-link link-light" to="/subjects">
+                            <BookHalf className="me-2" />
+                                Subjects
+                            </Link>
+                        </li>
                         <li className="nav-item">
                             <Link className="nav-link link-light" to="/exams">
                             <JournalText className="me-2" />

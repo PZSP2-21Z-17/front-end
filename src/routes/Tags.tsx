@@ -5,21 +5,22 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import FetchAPI from '../FetchAPI';
 import ReactSession from '../ReactSession';
-import { setDict,  setArray, refresh } from '../Common';
+import { setArray, refresh } from '../Common';
 import { ListGroupItem } from 'react-bootstrap';
+import Tag from '../entities/Tag';
 
 type TagsProps = {};
 
 export const Tags: FunctionComponent<TagsProps> = () => {
-    const [form, setForm] = useState({tag_code: '', name: ''});
-    const [tagList, setTagList] = useState([]);
+    const [tag, setTag] = useState(Tag.createEmpty());
+    const [tagList, setTagList] = useState([] as Tag[]);
 
     let isLogged = ReactSession.checkValue('username');
 
     const handleTagSubmit = (event: any) => {
         event.preventDefault();
         if (isLogged) {
-            FetchAPI.fetchPost('tag/create/', form).then(
+            FetchAPI.fetchPost('tag/create/', tag).then(
                 (json: any) => {
                     refresh();
                 }
@@ -31,7 +32,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         <Form onSubmit={handleTagSubmit}>
             <Form.Group className="mb-3" controlId="formTagName">
                 <Form.Label>Tag name</Form.Label>
-                <Form.Control type="text" placeholder="Enter tag name" className="w-25" onChange={e => setDict(setForm, {tag_code: e.target.value.substr(0, 3), name: e.target.value})}/>
+                <Form.Control type="text" placeholder="Enter tag name" className="w-25" onChange={e => setTag(new Tag(e.target.value.substr(0, 3), e.target.value))}/>
             </Form.Group>
 
             <Button type="submit" variant="primary" className="mb-3">
@@ -39,13 +40,12 @@ export const Tags: FunctionComponent<TagsProps> = () => {
             </Button>
         </Form>
     </>) : (<></>);
-
     
-    if (tagList.length === 0) {FetchAPI.fetchGet('tag/all/').then((json: []) => setArray(setTagList, json)); }
+    if (tagList.length === 0) {FetchAPI.fetchGet('tag/all/').then((jsonArray: []) => setArray(setTagList, jsonArray.map(json => Tag.fromJSON(json)))); }
 
     let tagListView = (isLogged && tagList.length > 0) ? (<>
         <ListGroup>
-            {tagList.map((tag) => <ListGroupItem key={tag['tag_code']}>{tag['tag_code']} - {tag['name']}</ListGroupItem>)}
+            {tagList.map((tag_) => <ListGroupItem key={tag_.tag_code}>{tag_.tag_code} - {tag_.name}</ListGroupItem>)}
         </ListGroup>
     </>) : (<></>);
 
@@ -54,7 +54,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
     return <div className="p-5">
         {userMessage}
         {tagListView}
-        
+        <p></p>
         {tagForm}
     </div>;
 }
