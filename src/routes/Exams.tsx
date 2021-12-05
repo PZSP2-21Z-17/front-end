@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import TestQuestionList from '../exams/TestQuestionList';
-import SelectableQuestion from '../exams/SelectableQuestion';
+import SelectableQuestionRow from '../exams/SelectableQuestionRow';
 import { indexToLetter } from '../Common';
+import { Row, Col, Button, Form, FormLabel, FormGroup, FormControl, Table } from 'react-bootstrap';
 
 export const Exams = () => {
     const questions = TestQuestionList;
@@ -10,6 +11,7 @@ export const Exams = () => {
     const [variantCount, setVariantCount] = useState(1);
     const [preface, setPreface] = useState('');
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const checkboxRef = useRef<HTMLInputElement>(null);
     const [isDownloadDisabled, setDownloadDisabled] = useState(true);
 
     const generateDocument = () => {
@@ -59,37 +61,54 @@ ${flattenedQuestions}
     };
 
     useEffect(generateDocument, [questions, questionSelection, title, preface]);
+    useEffect(() => {
+        if (checkboxRef.current == null) return;
+        checkboxRef.current.indeterminate = questionSelection.some(sel => sel) && questionSelection.some(sel => !sel);
+    }, [questionSelection]);
 
     return (
         <div className="d-flex h-100">
-            <div className="bg-warning p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>
+            <div className="bg-light bg-gradient p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>
                 <p className="h2">Exam creation</p>
-                <button onClick={downloadDocument} disabled={isDownloadDisabled}>Download</button>
-                <table className="w-100">
+                <Form className="mb-3">
+                    <FormGroup className="mb-1" as={Row} controlId="exam-title">
+                        <FormLabel column sm={3}>Title</FormLabel>
+                        <Col sm={9}>
+                            <FormControl type="text" value={title} onChange={evt => setTitle(evt.target.value)} />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup className="mb-1" as={Row} controlId="exam-variant-count">
+                        <FormLabel column sm={3}>Variant count</FormLabel>
+                        <Col sm={9}>
+                            <FormControl type="number" value={variantCount} onChange={evt => setVariantCount(Number(evt.target.value))} />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup className="mb-1" as={Row} controlId="exam-preface">
+                        <FormLabel column sm={3}>Title</FormLabel>
+                        <Col sm={9}>
+                            <FormControl as="textarea" value={preface} onChange={evt => setPreface(evt.target.value)} />
+                        </Col>
+                    </FormGroup>
+                    <Button variant="primary" onClick={downloadDocument} disabled={isDownloadDisabled}>Download generated PDF</Button>
+                </Form>
+                <p className="h5">Choose questions:</p>
+                <Table hover className="w-100" style={{ maxHeight: '100vh', overflow: 'auto' }}>
+                <thead>
+                    <tr>
+                        <th className="border-end">
+                            <input ref={checkboxRef} type="checkbox" checked={questionSelection.every(sel => sel)}
+                                onChange={evt => setQuestionSelection(questionSelection.map(sel => evt.target.checked))} />
+                        </th>
+                        <th>Question</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <td><label htmlFor="exam-title">Title</label></td>
-                        <td><input id="exam-title" className="w-100" type="text"
-                            value={title} onChange={evt => setTitle(evt.target.value)} /></td>
-                    </tr>
-                    <tr>
-                        <td><label htmlFor="exam-variant-count">Variant count</label></td>
-                        <td><input id="exam-variant-count" className="w-100" type="number" min="1"
-                            value={variantCount} onChange={evt => setVariantCount(Number(evt.target.value))} /></td>
-                    </tr>
-                    <tr>
-                        <td><label htmlFor="exam-preface">Preface</label></td>
-                        <td><textarea id="exam-preface" className="w-100"
-                            value={preface} onChange={evt => setPreface(evt.target.value)} /></td>
-                    </tr>
-                </tbody>
-                </table>
-                <div style={{ maxHeight: '100vh', overflow: 'auto' }}>
                     {questions.map((question, index) => (
-                        <SelectableQuestion key={question.id} question={question} selected={questionSelection[index]}
+                        <SelectableQuestionRow key={question.id} question={question} selected={questionSelection[index]}
                             onChangeSelection={onChangeSelection} />
                     ))}
-                </div>
+                </tbody>
+                </Table>
             </div>
             <div className="border border-dark border-2" style={{ flexBasis: '50%' }}>
                 <iframe title="pdf-preview" ref={iframeRef} className="d-block w-100 h-100"></iframe>
