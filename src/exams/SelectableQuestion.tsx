@@ -15,7 +15,7 @@ export const SelectableQuestion: FunctionComponent<SelectableQuestionProps> = (p
         <>
         <div className="w-100 d-flex">
             <div className="pe-2">
-                <input type="checkbox" checked={props.selected} onChange={changeListener} />
+                <input className="h-100" type="checkbox" checked={props.selected} onChange={changeListener} />
             </div>
             <div>
                 <p>{props.question.id}. {props.question.contents}</p>
