@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import TestQuestionList from '../exams/TestQuestionList';
 import SelectableQuestion from '../exams/SelectableQuestion';
 import { indexToLetter } from '../Common';
@@ -10,9 +10,11 @@ export const Exams = () => {
     const [variantCount, setVariantCount] = useState(1);
     const [preface, setPreface] = useState('');
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [isDownloadDisabled, setDownloadDisabled] = useState(true);
 
-    const onClickGenerate = () => {
+    const generateDocument = () => {
         if (iframeRef.current == null) return;
+        setDownloadDisabled(true);
         const flattenedQuestions = questions
             .filter((_question, index) => questionSelection[index])
             .map((question, qIndex) => {
@@ -37,9 +39,10 @@ ${flattenedQuestions}
             </textarea>
         `);
         iframeDocument.close();
+        setTimeout(() => setDownloadDisabled(false), 500);  // TODO: user a proper debounce function
     };
 
-    const onClickDownload = () => {
+    const downloadDocument = () => {
         if (iframeRef.current == null) return;
         (iframeRef.current.contentWindow! as any).eval(`
             scrollTo(0, 0);
@@ -55,10 +58,13 @@ ${flattenedQuestions}
             questions[index].id === questionId ? newSelected : oldSelected));
     };
 
+    useEffect(generateDocument, [questions, questionSelection, title, preface]);
+
     return (
         <div className="d-flex h-100">
             <div className="bg-warning p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>
                 <p className="h2">Exam creation</p>
+                <button onClick={downloadDocument} disabled={isDownloadDisabled}>Download</button>
                 <table className="w-100">
                 <tbody>
                     <tr>
@@ -84,8 +90,6 @@ ${flattenedQuestions}
                             onChangeSelection={onChangeSelection} />
                     ))}
                 </div>
-                <button onClick={onClickGenerate}>Generate</button>
-                <button onClick={onClickDownload}>Download</button>
             </div>
             <div className="border border-dark border-2" style={{ flexBasis: '50%' }}>
                 <iframe title="pdf-preview" ref={iframeRef} className="d-block w-100 h-100"></iframe>
