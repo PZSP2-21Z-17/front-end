@@ -34,8 +34,8 @@ export const App = () => {
                     </ul>
                 </div>
             </header>
-            <div className="flex-grow-1 d-flex">
-                <nav className="bg-secondary" style={{ width: '280px' }}>
+            <div className="flex-grow-1 d-flex" style={{ minHeight: 0 }}>
+                <nav className="bg-secondary" style={{ minWidth: '240px', maxWidth: '240px' }}>
                     <ul className="nav nav-pills flex-column mb-auto">
                         <li className="nav-item">
                             <Link className="nav-link link-light" to="/exams">
