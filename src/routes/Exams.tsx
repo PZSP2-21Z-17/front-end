@@ -68,9 +68,9 @@ ${flattenedTasks}
     };
 
     useEffect(() => {
-        FetchAPI.fetchGet('/group/answers/1/1').then(result => {
-            setTasks(result.task_affs.map((taskAff: any) => Task.fromJson(taskAff.tasks)));
-            console.log(result.task_affs.map((taskAff: any) => Task.fromJson(taskAff.tasks)));
+        FetchAPI.fetchGet('/task/all_with_answers').then(result => {
+            setTasks(result.map((task: any) => Task.fromJson(task)));
+            console.log(result.map((task: any) => Task.fromJson(task)));
         });
     }, []);
     useEffect(() => {
