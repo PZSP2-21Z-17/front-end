@@ -34,7 +34,7 @@ export const AnswerEditor: FunctionComponent<AnswerEditorProps> = (props: Answer
         <Form.Group as={Row} className="mb-3" controlId={`formAnswerName-${props.answer.id}`}>
             <Form.Label column sm={3}>Answer content</Form.Label>
             <Col sm={9}>
-                <Form.Control type="text" value={content} onChange={(evt: any) => updateAnswer(evt.target.value) } />
+                <Form.Control type="text" className="mb-2" value={content} onChange={(evt: any) => updateAnswer(evt.target.value) } />
             </Col>
             <Form.Label column sm={3}>Is correct?</Form.Label>
             <Col sm={9}>
