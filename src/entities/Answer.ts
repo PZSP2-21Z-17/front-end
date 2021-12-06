@@ -7,8 +7,14 @@ export type FetchedAnswer = {
 
 export class Answer {
     id: number | undefined;
-    content: string = '';
-    isCorrect: boolean = false;
+    content: string;
+    isCorrect: boolean;
+
+    constructor(id?: number, content: string = '', isCorrect: boolean = false) {
+        this.id = id;
+        this.content = content;
+        this.isCorrect = isCorrect;
+    }
 
     toJson() {
         return {
