@@ -13,8 +13,14 @@ export type FetchedTask = {
 
 export class Task {
     id: number | undefined;
-    content: string = '';
-    answers: Answer[] = [];
+    content: string;
+    answers: Answer[];
+
+    constructor(id?: number, content: string = '', answers: Answer[] = []) {
+        this.id = id;
+        this.content = content;
+        this.answers = answers;
+    }
 
     toJson = () => {
         return {

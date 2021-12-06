@@ -15,10 +15,18 @@ export const AnswerEditor: FunctionComponent<AnswerEditorProps> = (props: Answer
     const answerChangeHandler = props.answerChangeHandler;
     const index = props.index;
 
-    const updateAnswer = () => {
+    const updateAnswer = (changedContent?: string, changedIsCorrect?: boolean) => {
         let answer = new Answer();
         answer.content = content;
         answer.isCorrect = isCorrect;
+        if (changedContent) {
+            answer.content = changedContent;
+            setContent(changedContent);
+        }
+        if (changedIsCorrect) {
+            answer.isCorrect = changedIsCorrect;
+            setIsCorrect(changedIsCorrect);
+        }
         answerChangeHandler(index, answer);
     };
 
@@ -26,11 +34,11 @@ export const AnswerEditor: FunctionComponent<AnswerEditorProps> = (props: Answer
         <Form.Group as={Row} className="mb-3" controlId={`formAnswerName-${props.answer.id}`}>
             <Form.Label column sm={3}>Answer content</Form.Label>
             <Col sm={9}>
-                <Form.Control type="text" value={content} onChange={(evt: any) => { setContent(evt.target.value); updateAnswer(); } } />
+                <Form.Control type="text" value={content} onChange={(evt: any) => updateAnswer(evt.target.value) } />
             </Col>
             <Form.Label column sm={3}>Is correct?</Form.Label>
             <Col sm={9}>
-                <Form.Check checked={isCorrect} onChange={(evt: any) => { setIsCorrect(evt.target.checked); updateAnswer(); } } />
+                <Form.Check checked={isCorrect} onChange={(evt: any) => updateAnswer(undefined, evt.target.checked) } />
             </Col>
         </Form.Group>
     );

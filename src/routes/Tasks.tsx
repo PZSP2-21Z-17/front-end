@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Form, Button, ListGroup, Accordion } from "react-bootstrap";
+import { Form, Button, ListGroup, Accordion, Col, Row } from "react-bootstrap";
 import Answer from "../entities/Answer";
 import Task from "../entities/Task";
 import FetchAPI from "../FetchAPI";
 import ReactSession from "../ReactSession";
-import TaskEditor from "../tasks/TaskEditor";
+import AnswerEditor from "../tasks/AnswerEditor";
+import { addToDict } from '../Common';
 
 export const Tasks = () => {
     const [taskList, setTaskList] = useState([] as Task[]);
@@ -16,16 +17,35 @@ export const Tasks = () => {
 
     let isLogged = ReactSession.checkValue('username');
 
-    const handleTaskSubmit = (event: any) => {
-        event.preventDefault();
-        console.log(editedTask.toJson());
+    const taskEditorCallback = {
+        setAnswerCount: (count: number) => {
+            if (editedTask.answers.length > count)
+                addToDict(editedTask, setEditedTask, 'answers', editedTask.answers.slice(0, count));
+            else if (editedTask.answers.length < count)
+                addToDict(editedTask, setEditedTask, 'answers', editedTask.answers.concat(new Array(count - editedTask.answers.length).fill(undefined).map(() => new Answer())));
+        },
+        updateAnswer: (index: number, newAnswer: Answer) => {
+            let newAnswers = editedTask.answers.map((oldAnswer, i) => i !== index ? oldAnswer : newAnswer);
+            addToDict(editedTask, setEditedTask, 'answers', newAnswers);
+        },
+        updateContent: (newContent: string) => {
+            addToDict(editedTask, setEditedTask, 'content', newContent);
+        }
+    };
+
+    const handleTaskSubmit = () => {
+        let task = new Task(undefined, editedTask.content, editedTask.answers
+            .map(a => new Answer(undefined, a.content, a.isCorrect)));
+        console.log(editedTask);
+        console.log(task.toJson());
         //if (isLogged) {
-            FetchAPI.fetchPost('task/create_with_answers', editedTask.toJson()).then(
+            FetchAPI.fetchPost('task/create_with_answers', task.toJson()).then(
                 () => {
                     updateTasks();
                 }
             )
         //}
+        return false;
     }
 
     const updateTasks = () => {
@@ -56,8 +76,21 @@ export const Tasks = () => {
             ))}
         </Accordion>
         
-        <Form onSubmit={handleTaskSubmit}>
-            <TaskEditor task={editedTask} taskChangeHandler={setEditedTask} />
+        <Form onSubmit={(evt: any) => {evt.preventDefault(); console.log(editedTask); return handleTaskSubmit();}}>
+        <Form.Group as={Row} className="mb-3" controlId="formTaskName">
+            <Form.Label column sm={3}>Task content</Form.Label>
+                <Col sm={9}>
+                    <Form.Control type="text" value={editedTask.content} onChange={(evt: any) => taskEditorCallback.updateContent(evt.target.value) } />
+                </Col>
+                <Form.Label column sm={3}>Answers</Form.Label>
+                <Col sm={9}>
+                    {editedTask.answers.map((answer, index) => (
+                        <AnswerEditor key={index} index={index} answer={answer} answerChangeHandler={ taskEditorCallback.updateAnswer } />
+                    ))}
+                    <Button onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length + 1)}>Add answer</Button>
+                    <Button disabled={editedTask.answers.length < 1} onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length - 1)}>Remove answer</Button>
+                </Col>
+            </Form.Group>
             <Button className="mb-3" type="submit" variant="primary">
                 Submit new task
             </Button>
