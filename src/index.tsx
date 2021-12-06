@@ -8,7 +8,7 @@ import App from './App';
 import Home from './routes/Home';
 import NotFound from './routes/NotFound';
 import Exams from './routes/Exams';
-import Questions from './routes/Questions';
+import Tasks from './routes/Tasks';
 import Tags from './routes/Tags';
 import PdfUserInterface from './routes/PdfUserInterface';
 import Login from './routes/Login';
@@ -21,7 +21,7 @@ ReactDOM.render(
         <Route path="/" element={<App />}>
           <Route path="" element={<Home />} />
           <Route path="exams" element={<Exams />} />
-          <Route path="questions" element={<Questions />} />
+          <Route path="questions" element={<Tasks />} />
           <Route path="tags" element={<Tags />} />
           <Route path="pdfgen" element={<PdfUserInterface customText={'custom text'} />} />
           <Route path="login" element={<Login />} />
