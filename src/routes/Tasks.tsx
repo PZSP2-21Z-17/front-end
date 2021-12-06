@@ -38,18 +38,18 @@ export const Tasks = () => {
             .map(a => new Answer(undefined, a.content, a.isCorrect)));
         console.log(editedTask);
         console.log(task.toJson());
-        //if (isLogged) {
+        if (isLogged) {
             FetchAPI.fetchPost('task/create_with_answers', task.toJson()).then(
                 () => {
                     updateTasks();
                 }
             )
-        //}
+        }
         return false;
     }
 
     const updateTasks = () => {
-        if (isLogged) return;
+        if (!isLogged) return;
         FetchAPI.fetchGet('/task/all_with_answers').then((fetchedTasks: any) => {
             setTaskList(fetchedTasks.map((fetchedTask: any) => Task.fromJson(fetchedTask)));
         });
@@ -57,10 +57,10 @@ export const Tasks = () => {
 
     useEffect(updateTasks, [isLogged]);
 
-    if (isLogged)
+    if (!isLogged)
         return <p>Log in to create tasks.</p>;
 
-    return <div className="p-5">
+    return <div className="p-5" style={{ overflow: "auto", height: "100%"}}>
         <Accordion className="mb-3">
             {taskList.map(task => (
                 <Accordion.Item key={task.id} eventKey={task.id!.toString()}>
@@ -68,7 +68,7 @@ export const Tasks = () => {
                     <Accordion.Body>
                         <ListGroup>
                             {task.answers.map(answer => (
-                                <ListGroup.Item key={answer.id}>{answer.id}. {answer.content}</ListGroup.Item>
+                                <ListGroup.Item key={answer.id}>{answer.content}</ListGroup.Item>
                             ))}
                         </ListGroup>
                     </Accordion.Body>
@@ -78,23 +78,22 @@ export const Tasks = () => {
         
         <Form onSubmit={(evt: any) => {evt.preventDefault(); console.log(editedTask); return handleTaskSubmit();}}>
         <Form.Group as={Row} className="mb-3" controlId="formTaskName">
-            <Form.Label column sm={3}>Task content</Form.Label>
+            <Form.Label column sm={2}>Task content</Form.Label>
                 <Col sm={9}>
-                    <Form.Control type="text" value={editedTask.content} onChange={(evt: any) => taskEditorCallback.updateContent(evt.target.value) } />
+                    <Form.Control type="text" value={editedTask.content} className="mb-2" onChange={(evt: any) => taskEditorCallback.updateContent(evt.target.value) } />
                 </Col>
-                <Form.Label column sm={3}>Answers</Form.Label>
+                <Form.Label column sm={2}>Answers</Form.Label>
                 <Col sm={9}>
                     {editedTask.answers.map((answer, index) => (
                         <AnswerEditor key={index} index={index} answer={answer} answerChangeHandler={ taskEditorCallback.updateAnswer } />
                     ))}
-                    <Button onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length + 1)}>Add answer</Button>
+                    <Button className="me-3" onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length + 1)}>Add answer</Button>
                     <Button disabled={editedTask.answers.length < 1} onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length - 1)}>Remove answer</Button>
                 </Col>
             </Form.Group>
             <Button className="mb-3" type="submit" variant="primary">
                 Submit new task
             </Button>
-            <Button onClick={() => {console.log(editedTask)}}></Button>
         </Form>
     </div>;
 }
