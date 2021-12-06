@@ -30,9 +30,14 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
 
     let subjectForm = isLogged ? (<>
         <Form onSubmit={handleSubjectSubmit}>
+            <Form.Group className="mb-3" controlId="formSubjectCode">
+                <Form.Label>Subject code</Form.Label>
+                <Form.Control type="text" placeholder="Enter subject code" className="w-25" onChange={e => subject.modify(setSubject, 'subject_code', e.target.value)}/>
+            </Form.Group>
+
             <Form.Group className="mb-3" controlId="formSubjectName">
                 <Form.Label>Subject name</Form.Label>
-                <Form.Control type="text" placeholder="Enter subject name" className="w-25" onChange={e => setSubject(new Subject(e.target.value.substr(0, 3), e.target.value))}/>
+                <Form.Control type="text" placeholder="Enter subject name" className="w-25" onChange={e => subject.modify(setSubject, 'name', e.target.value)}/>
             </Form.Group>
 
             <Button type="submit" variant="primary" className="mb-3">

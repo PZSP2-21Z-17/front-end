@@ -21,6 +21,21 @@ export class Subject {
     static createEmpty() {
         return new Subject('', '');
     }
+
+    // hella ugly, I know
+    modify(setter: any, field: string, value: string) {
+        switch(field) {
+            case 'subject_code': {
+                this.subject_code = value;
+                break;
+            }
+            case 'name': {
+                this.name = value;
+                break;
+            }
+        }
+        setter(this);
+    }
 };
 
 export default Subject;
