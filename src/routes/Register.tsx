@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { LoginContext } from '../Context';
 import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
 import ReactSession from '../ReactSession';
@@ -10,11 +11,12 @@ import User from '../entities/User';
 type RegisterProps = {};
 
 export const Register: FunctionComponent<RegisterProps> = () => {
+    const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
     const [confirmPass, setConfirmPass] = useState('');
     const [goodPass, setGoodPass] = useState(true);
 
-    let isLogged = ReactSession.checkValue('username');
+    let isLogged = loginState.state.isLogged;
 
     const validateForm = () => {
         return (confirmPass === user.password);

@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { LoginContext } from '../Context';
 import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
 import ReactSession from '../ReactSession';
@@ -10,9 +11,10 @@ import User from '../entities/User';
 type LoginProps = {};
 
 export const Login: FunctionComponent<LoginProps> = () => {
+    const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
 
-    let isLogged = ReactSession.checkValue('username');
+    let isLogged = loginState.state.isLogged;
 
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
@@ -20,6 +22,8 @@ export const Login: FunctionComponent<LoginProps> = () => {
             FetchAPI.postUserLogin(user).then(
                 (json: any) => {
                     ReactSession.setValue('username', json['e_mail']);
+                    loginState.setUsername(json['e_mail']);
+                    loginState.setIsInProgress(false);
                     refresh();
                 }
             )
@@ -44,7 +48,7 @@ export const Login: FunctionComponent<LoginProps> = () => {
     </>) : (<></>);
 
     let userMessage = isLogged ? (<>
-        You are logged in as {ReactSession.getValue('username')}.
+        You are logged in as {loginState.state.username}.
     </>) : (<></>);
 
     return <>

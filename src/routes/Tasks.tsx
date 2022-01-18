@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Form, Button, ListGroup, Accordion, Col, Row } from "react-bootstrap";
+
+import { LoginContext } from '../Context';
 import Answer from "../entities/Answer";
 import { Task } from "../entities/Task";
 import FetchAPI from "../FetchAPI";
-import ReactSession from "../ReactSession";
 import AnswerEditor from "../tasks/AnswerEditor";
 import { addToDict } from '../Common';
 
 export const Tasks = () => {
+    const loginState = useContext(LoginContext);
     const [taskList, setTaskList] = useState([] as Task[]);
     const [editedTask, setEditedTask] = useState(() => {
         let task = new Task();
@@ -15,7 +17,7 @@ export const Tasks = () => {
         return task;
     });
 
-    let isLogged = ReactSession.checkValue('username');
+    let isLogged = loginState.state.isLogged;
 
     const taskEditorCallback = {
         setAnswerCount: (count: number) => {
@@ -58,7 +60,7 @@ export const Tasks = () => {
     useEffect(updateTasks, [isLogged]);
 
     if (!isLogged)
-        return <p>Log in to create tasks.</p>;
+        return <div className="p-5">Log in to create tasks.</div>;
 
     return <div className="p-5" style={{ overflow: "auto", height: "100%"}}>
         <Accordion className="mb-3">

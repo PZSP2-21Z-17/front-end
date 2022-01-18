@@ -1,11 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { Row, Col, Button, Form, FormLabel, FormGroup, FormControl, Table } from 'react-bootstrap';
+
+import { LoginContext } from '../Context';
 import Task from '../entities/Task';
 import SelectableTaskRow from '../exams/SelectableTaskRow';
 import { indexToLetter } from '../Common';
-import { Row, Col, Button, Form, FormLabel, FormGroup, FormControl, Table } from 'react-bootstrap';
 import FetchAPI from '../FetchAPI';
 
 export const Exams = () => {
+    const loginState = useContext(LoginContext);
     const [tasks, setTasks] = useState([] as Task[]);
     const [taskSelection, setTaskSelection] = useState(tasks.map(() => true));
     const [title, setTitle] = useState('Exam');
@@ -14,6 +17,8 @@ export const Exams = () => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const checkboxRef = useRef<HTMLInputElement>(null);
     const [isDownloadDisabled, setDownloadDisabled] = useState(true);
+
+    let isLogged = loginState.state.isLogged;
 
     const generateDocument = () => {
         if (iframeRef.current == null) return;
@@ -82,6 +87,7 @@ ${flattenedTasks}
         checkboxRef.current.indeterminate = taskSelection.some(sel => sel) && taskSelection.some(sel => !sel);
     }, [taskSelection]);
 
+    if (!isLogged) return (<div className="p-5">Log in to create exams.</div>);
     return (
         <div className="d-flex h-100">
             <div className="bg-light bg-gradient p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>

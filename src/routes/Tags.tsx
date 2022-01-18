@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import { LoginContext } from '../Context';
 import FetchAPI from '../FetchAPI';
-import ReactSession from '../ReactSession';
 import { setArray, refresh } from '../Common';
 import { ListGroupItem } from 'react-bootstrap';
 import Tag from '../entities/Tag';
@@ -12,10 +12,11 @@ import Tag from '../entities/Tag';
 type TagsProps = {};
 
 export const Tags: FunctionComponent<TagsProps> = () => {
+    const loginState = useContext(LoginContext);
     const [tag, setTag] = useState(Tag.createEmpty());
     const [tagList, setTagList] = useState([] as Tag[]);
 
-    let isLogged = ReactSession.checkValue('username');
+    let isLogged = loginState.state.isLogged;
 
     const handleTagSubmit = (event: any) => {
         event.preventDefault();

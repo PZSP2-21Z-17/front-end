@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import { LoginContext } from '../Context';
 import FetchAPI from '../FetchAPI';
-import ReactSession from '../ReactSession';
 import { setArray, refresh } from '../Common';
 import { ListGroupItem } from 'react-bootstrap';
 import Subject from '../entities/Subject';
@@ -12,10 +12,11 @@ import Subject from '../entities/Subject';
 type SubjectsProps = {};
 
 export const Subjects: FunctionComponent<SubjectsProps> = () => {
+    const loginState = useContext(LoginContext);
     const [subject, setSubject] = useState(Subject.createEmpty());
     const [subjectList, setSubjectList] = useState([] as Subject[]);
 
-    let isLogged = ReactSession.checkValue('username');
+    let isLogged = loginState.state.isLogged;
 
     const handleSubjectSubmit = (event: any) => {
         event.preventDefault();
