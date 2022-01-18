@@ -1,46 +1,46 @@
-export class FetchAPI {
-    static readonly address = `${window.location.protocol}//${window.location.host}/rest/`;
+import User from "./entities/User";
+import Subject from "./entities/Subject";
+import Tag from "./entities/Tag";
+import FetchedTask from "./entities/Task";
 
-    static fetchGet = async (route: string) => {
-        const url = new URL(route, FetchAPI.address).toString();
-        return fetch(url
-        ).then(
-            res => res.json()
-        ).catch(
-            error => console.log(error)
-        );
-    };
+export default class FetchAPI {
+    static getAllTasks = () => fetchData('/task/all_with_answers', 'GET');
+    static getSubjects = () => fetchData('subject/all', 'GET');
+    static getTags = () => fetchData('tag/all', 'GET');
 
-    static fetchPost = async (route: string, data: any) => {
-        const url = new URL(route, FetchAPI.address).toString();
-        return fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
-        ).then(
-            res => res.json()
-        ).catch(
-            error => console.log(error)
-        );
-    };
-
-    static fetchDelete = async (route: string) => {
-        const url = new URL(route, FetchAPI.address).toString();
-        return fetch(url, {method: 'DELETE'}
-        ).then(
-            res => res.json()
-        ).catch(
-            error => console.log(error)
-        );
-    };
-
-    static fetchPatch = async (route: string, data: any) => {
-        const url = new URL(route, FetchAPI.address).toString();
-        return fetch(url, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
-        ).then(
-            res => res.json()
-        ).catch(
-            error => console.log(error)
-        );
-    };
+    static postUserLogin = (user: User) => fetchData('user/login', 'POST', user);
+    static postUserRegister = (user: User) => fetchData('user/register', 'POST', user);
+    static postSubjectCreate = (subject: Subject) => fetchData('subject/create', 'POST', subject);
+    static postTagCreate = (tag: Tag) => fetchData('tag/create', 'POST', tag);
+    static postTaskCreate = (task: FetchedTask) => fetchData('task/create_with_answers', 'POST', task);
 
 }
 
-export default FetchAPI;
+export function fetchData(url: string, method: string = 'GET', payload?: {}) {
+    const config: RequestInit = {
+        method: method
+    };
+    if (payload !== undefined) {
+        config.headers = {
+            'Content-Type': 'application/json'
+        };
+        config.body = JSON.stringify(payload);
+    }
+    return fetch(url, config)
+        .then(async response => {
+            // based on: https://jasonwatmore.com/post/2021/09/22/fetch-vanilla-js-check-if-http-response-is-json-in-javascript
+            const isJson = response.headers.get('content-type')?.includes('application/json') ||
+                response.headers.get('content-type')?.includes('application/problem+json');
+            const data = isJson ? await response.json() : null;
+            if (!response.ok) {
+                console.log(data);
+                let returnData = response.statusText;
+                if (data && data.message)
+                    returnData = data.message;
+                if (data && data.errors && Object.entries(data.errors)[0])
+                    returnData = `${Object.entries(data.errors)[0][0]}: ${Object.entries(data.errors)[0][1]}`
+                return Promise.reject(returnData);
+            }
+            return Promise.resolve(data);
+        });
+}

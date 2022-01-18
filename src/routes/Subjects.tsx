@@ -20,7 +20,7 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
     const handleSubjectSubmit = (event: any) => {
         event.preventDefault();
         if (isLogged) {
-            FetchAPI.fetchPost('subject/create/', subject).then(
+            FetchAPI.postSubjectCreate(subject).then(
                 (json: any) => {
                     refresh();
                 }
@@ -46,7 +46,13 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         </Form>
     </>) : (<></>);
 
-    if (subjectList.length === 0) {FetchAPI.fetchGet('subject/all/').then((jsonArray: []) => setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))); }
+    if (subjectList.length === 0) {
+        FetchAPI.getSubjects().then(
+            (jsonArray: []) => {
+                if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
+            }
+        );
+    }
 
     let subjectListView = (isLogged && subjectList.length > 0) ? (<>
         <ListGroup>

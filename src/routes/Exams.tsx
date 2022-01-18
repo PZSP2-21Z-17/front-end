@@ -68,7 +68,7 @@ ${flattenedTasks}
     };
 
     useEffect(() => {
-        FetchAPI.fetchGet('/task/all_with_answers').then(result => {
+        FetchAPI.getAllTasks().then(result => {
             setTasks(result.map((task: any) => Task.fromJson(task)));
             console.log(result.map((task: any) => Task.fromJson(task)));
         });
