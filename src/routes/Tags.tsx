@@ -20,7 +20,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
     const handleTagSubmit = (event: any) => {
         event.preventDefault();
         if (isLogged) {
-            FetchAPI.fetchPost('tag/create/', tag).then(
+            FetchAPI.postTagCreate(tag).then(
                 (json: any) => {
                     refresh();
                 }
@@ -41,8 +41,13 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         </Form>
     </>) : (<></>);
     
-    if (tagList.length === 0) {FetchAPI.fetchGet('tag/all/').then((jsonArray: []) => setArray(setTagList, jsonArray.map(json => Tag.fromJSON(json)))); }
-
+    if (tagList.length === 0) {
+        FetchAPI.getTags().then(
+            (jsonArray: []) => {
+                if (jsonArray.length > 0) setArray(setTagList, jsonArray.map(json => Tag.fromJSON(json)))
+            }
+        );
+    }
     let tagListView = (isLogged && tagList.length > 0) ? (<>
         <ListGroup>
             {tagList.map((tag_) => <ListGroupItem key={tag_.tag_code}>{tag_.tag_code} - {tag_.name}</ListGroupItem>)}

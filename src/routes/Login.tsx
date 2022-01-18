@@ -17,7 +17,7 @@ export const Login: FunctionComponent<LoginProps> = () => {
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
         if (!isLogged) {
-            FetchAPI.fetchPost('user/login/', user).then(
+            FetchAPI.postUserLogin(user).then(
                 (json: any) => {
                     ReactSession.setValue('username', json['e_mail']);
                     refresh();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, Button, ListGroup, Accordion, Col, Row } from "react-bootstrap";
 import Answer from "../entities/Answer";
-import Task from "../entities/Task";
+import { Task } from "../entities/Task";
 import FetchAPI from "../FetchAPI";
 import ReactSession from "../ReactSession";
 import AnswerEditor from "../tasks/AnswerEditor";
@@ -39,7 +39,7 @@ export const Tasks = () => {
         console.log(editedTask);
         console.log(task.toJson());
         if (isLogged) {
-            FetchAPI.fetchPost('task/create_with_answers', task.toJson()).then(
+            FetchAPI.postTaskCreate(task).then(
                 () => {
                     updateTasks();
                 }
@@ -50,7 +50,7 @@ export const Tasks = () => {
 
     const updateTasks = () => {
         if (!isLogged) return;
-        FetchAPI.fetchGet('/task/all_with_answers').then((fetchedTasks: any) => {
+        FetchAPI.getAllTasks().then((fetchedTasks: any) => {
             setTaskList(fetchedTasks.map((fetchedTask: any) => Task.fromJson(fetchedTask)));
         });
     }

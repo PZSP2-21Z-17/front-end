@@ -24,7 +24,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         event.preventDefault();
         if (!isLogged) {
             if (validateForm()) {
-                FetchAPI.fetchPost('user/register/', user).then(
+                FetchAPI.postUserRegister(user).then(
                     (json: any) => {
                         ReactSession.setValue('username', json['e_mail']);
                         refresh();
