@@ -50,9 +50,9 @@ export const App = () => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link link-light" to="/questions">
+                            <Link className="nav-link link-light" to="/tasks">
                                 <Question className="me-2" />
-                                Questions
+                                Tasks
                             </Link>
                         </li>
                         <li className="nav-item">

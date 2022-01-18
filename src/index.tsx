@@ -22,7 +22,7 @@ ReactDOM.render(
         <Route path="/" element={<App />}>
           <Route path="" element={<Home />} />
           <Route path="exams" element={<Exams />} />
-          <Route path="questions" element={<Tasks />} />
+          <Route path="tasks" element={<Tasks />} />
           <Route path="tags" element={<Tags />} />
           <Route path="subjects" element={<Subjects />} />
           <Route path="login" element={<Login />} />
