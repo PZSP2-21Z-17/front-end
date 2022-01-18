@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useContext } from 'react';
+import React, { FunctionComponent, useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -47,13 +47,18 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         </Form>
     </>) : (<></>);
 
-    if (subjectList.length === 0) {
-        FetchAPI.getSubjects().then(
-            (jsonArray: []) => {
-                if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
-            }
-        );
-    }
+    let isSubjectListEmpty = subjectList.length === 0;
+    const getSubjects = () => {
+        if (isSubjectListEmpty) {
+            FetchAPI.getSubjects().then(
+                (jsonArray: []) => {
+                    if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
+                }
+            );
+        }
+    };
+
+    useEffect(getSubjects, [isSubjectListEmpty]);
 
     let subjectListView = (isLogged && subjectList.length > 0) ? (<>
         <ListGroup>

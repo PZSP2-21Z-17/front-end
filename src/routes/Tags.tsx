@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useContext } from 'react';
+import React, { FunctionComponent, useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -41,14 +41,20 @@ export const Tags: FunctionComponent<TagsProps> = () => {
             </Button>
         </Form>
     </>) : (<></>);
-    
-    if (tagList.length === 0) {
-        FetchAPI.getTags().then(
-            (jsonArray: []) => {
-                if (jsonArray.length > 0) setArray(setTagList, jsonArray.map(json => Tag.fromJSON(json)))
-            }
-        );
-    }
+ 
+    let isTagListEmpty = tagList.length === 0;
+    const getTags = () => {
+        if (isTagListEmpty) {
+            FetchAPI.getTags().then(
+                (jsonArray: []) => {
+                    if (jsonArray.length > 0) setArray(setTagList, jsonArray.map(json => Tag.fromJSON(json)))
+                }
+            );
+        }
+    };
+
+    useEffect(getTags, [isTagListEmpty]);
+
     let tagListView = (isLogged && tagList.length > 0) ? (<>
         <ListGroup>
             {tagList.map((tag_) => <ListGroupItem key={tag_.tag_code}>{tag_.tag_code} - {tag_.name}</ListGroupItem>)}
