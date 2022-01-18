@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import { LoginContext } from '../Context';
 import FetchAPI from '../FetchAPI';
-import ReactSession from '../ReactSession';
 import { setArray, refresh } from '../Common';
 import { ListGroupItem } from 'react-bootstrap';
 import Subject from '../entities/Subject';
@@ -12,14 +12,13 @@ import Subject from '../entities/Subject';
 type SubjectsProps = {};
 
 export const Subjects: FunctionComponent<SubjectsProps> = () => {
+    const loginState = useContext(LoginContext);
     const [subject, setSubject] = useState(Subject.createEmpty());
     const [subjectList, setSubjectList] = useState([] as Subject[]);
 
-    let isLogged = ReactSession.checkValue('username');
-
     const handleSubjectSubmit = (event: any) => {
         event.preventDefault();
-        if (isLogged) {
+        if (loginState.state.isLogged) {
             FetchAPI.postSubjectCreate(subject).then(
                 (json: any) => {
                     refresh();
@@ -28,7 +27,7 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         }
     }
 
-    let subjectForm = isLogged ? (<>
+    let subjectForm = loginState.state.isLogged ? (<>
         <Form onSubmit={handleSubjectSubmit}>
             <Form.Group className="mb-3" controlId="formSubjectCode">
                 <Form.Label>Subject code</Form.Label>
@@ -46,28 +45,32 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         </Form>
     </>) : (<></>);
 
-    if (subjectList.length === 0) {
-        FetchAPI.getSubjects().then(
-            (jsonArray: []) => {
-                if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
-            }
-        );
-    }
+    const getSubjects = () => {
+        if (loginState.state.isLogged) {
+            FetchAPI.getSubjects().then(
+                (jsonArray: []) => {
+                    if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
+                }
+            );
+        }
+    };
 
-    let subjectListView = (isLogged && subjectList.length > 0) ? (<>
+    useEffect(getSubjects, [loginState.state.isLogged]);
+
+    let subjectListView = (loginState.state.isLogged && subjectList.length > 0) ? (<>
         <ListGroup>
             {subjectList.map((subject_) => <ListGroupItem key={subject_.subject_code}>{subject_.subject_code} - {subject_.name}</ListGroupItem>)}
         </ListGroup>
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<></>) : (<>Log in to create subjects.</>);
+    let userMessage = loginState.state.isLogged ? (<></>) : (<>Log in to create subjects.</>);
 
-    return <div className="p-5">
+    return <>
         {userMessage}
         {subjectListView}
         <p></p>
         {subjectForm}
-    </div>;
+    </>;
 }
 
 export default Subjects;

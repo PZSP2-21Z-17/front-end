@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { LoginContext } from '../Context';
 import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
 import ReactSession from '../ReactSession';
@@ -10,11 +11,10 @@ import User from '../entities/User';
 type RegisterProps = {};
 
 export const Register: FunctionComponent<RegisterProps> = () => {
+    const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
     const [confirmPass, setConfirmPass] = useState('');
     const [goodPass, setGoodPass] = useState(true);
-
-    let isLogged = ReactSession.checkValue('username');
 
     const validateForm = () => {
         return (confirmPass === user.password);
@@ -22,7 +22,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
 
     const handleRegisterSubmit = (event: any) => {
         event.preventDefault();
-        if (!isLogged) {
+        if (!loginState.state.isLogged) {
             if (validateForm()) {
                 FetchAPI.postUserRegister(user).then(
                     (json: any) => {
@@ -36,7 +36,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         }
     }
 
-    let registerForm = !isLogged ? (<>
+    let registerForm = !loginState.state.isLogged ? (<>
         <Form onSubmit={handleRegisterSubmit}>
             <Form.Group className="mb-3" controlId="formRegisterUsername">
                 <Form.Label>E-mail</Form.Label>
@@ -68,20 +68,18 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         </Form>
     </>) : (<></>);
 
-    let noBuenoPasswordMessage = !isLogged && !goodPass ? (<>
+    let noBuenoPasswordMessage = !loginState.state.isLogged && !goodPass ? (<>
         Passwords don't match!
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<>
+    let userMessage = loginState.state.isLogged ? (<>
         You are logged in as {ReactSession.getValue('username')}.
     </>) : (<></>);
 
     return <>
-        <div className="p-5">
             {registerForm}
             {noBuenoPasswordMessage}
             {userMessage}
-        </div>
     </>;
 }
 

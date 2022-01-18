@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { LoginContext } from '../Context';
 import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
 import ReactSession from '../ReactSession';
@@ -10,23 +11,24 @@ import User from '../entities/User';
 type LoginProps = {};
 
 export const Login: FunctionComponent<LoginProps> = () => {
+    const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
-
-    let isLogged = ReactSession.checkValue('username');
 
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
-        if (!isLogged) {
+        if (!loginState.state.isLogged) {
             FetchAPI.postUserLogin(user).then(
                 (json: any) => {
                     ReactSession.setValue('username', json['e_mail']);
+                    loginState.setUsername(json['e_mail']);
+                    loginState.setIsInProgress(false);
                     refresh();
                 }
             )
         }
     }
 
-    let loginForm = !isLogged ? (<>
+    let loginForm = !loginState.state.isLogged ? (<>
         <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3" controlId="formLoginUsername">
                 <Form.Label>E-mail</Form.Label>
@@ -43,15 +45,13 @@ export const Login: FunctionComponent<LoginProps> = () => {
         </Form>
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<>
-        You are logged in as {ReactSession.getValue('username')}.
+    let userMessage = loginState.state.isLogged ? (<>
+        You are logged in as {loginState.state.username}.
     </>) : (<></>);
 
     return <>
-        <div className="p-5">
             {userMessage}
             {loginForm}
-        </div>
     </>;
 }
 

@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Form, Button, ListGroup, Accordion, Col, Row } from "react-bootstrap";
+
+import { LoginContext } from '../Context';
 import Answer from "../entities/Answer";
 import { Task } from "../entities/Task";
 import FetchAPI from "../FetchAPI";
-import ReactSession from "../ReactSession";
 import AnswerEditor from "../tasks/AnswerEditor";
 import { addToDict } from '../Common';
 
 export const Tasks = () => {
+    const loginState = useContext(LoginContext);
     const [taskList, setTaskList] = useState([] as Task[]);
     const [editedTask, setEditedTask] = useState(() => {
         let task = new Task();
         task.answers = new Array(4).fill(undefined).map(() => new Answer());
         return task;
     });
-
-    let isLogged = ReactSession.checkValue('username');
 
     const taskEditorCallback = {
         setAnswerCount: (count: number) => {
@@ -38,7 +38,7 @@ export const Tasks = () => {
             .map(a => new Answer(undefined, a.content, a.isCorrect)));
         console.log(editedTask);
         console.log(task.toJson());
-        if (isLogged) {
+        if (loginState.state.isLogged) {
             FetchAPI.postTaskCreate(task).then(
                 () => {
                     updateTasks();
@@ -49,18 +49,18 @@ export const Tasks = () => {
     }
 
     const updateTasks = () => {
-        if (!isLogged) return;
+        if (!loginState.state.isLogged) return;
         FetchAPI.getAllTasks().then((fetchedTasks: any) => {
             setTaskList(fetchedTasks.map((fetchedTask: any) => Task.fromJson(fetchedTask)));
         });
     }
 
-    useEffect(updateTasks, [isLogged]);
+    useEffect(updateTasks, [loginState.state.isLogged]);
 
-    if (!isLogged)
-        return <p>Log in to create tasks.</p>;
+    if (!loginState.state.isLogged)
+        return <>Log in to create tasks.</>;
 
-    return <div className="p-5" style={{ overflow: "auto", height: "100%"}}>
+    return <div style={{ overflow: "auto", height: "100%"}}>
         <Accordion className="mb-3">
             {taskList.map(task => (
                 <Accordion.Item key={task.id} eventKey={task.id!.toString()}>
