@@ -16,15 +16,13 @@ export const Register: FunctionComponent<RegisterProps> = () => {
     const [confirmPass, setConfirmPass] = useState('');
     const [goodPass, setGoodPass] = useState(true);
 
-    let isLogged = loginState.state.isLogged;
-
     const validateForm = () => {
         return (confirmPass === user.password);
     }
 
     const handleRegisterSubmit = (event: any) => {
         event.preventDefault();
-        if (!isLogged) {
+        if (!loginState.state.isLogged) {
             if (validateForm()) {
                 FetchAPI.postUserRegister(user).then(
                     (json: any) => {
@@ -38,7 +36,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         }
     }
 
-    let registerForm = !isLogged ? (<>
+    let registerForm = !loginState.state.isLogged ? (<>
         <Form onSubmit={handleRegisterSubmit}>
             <Form.Group className="mb-3" controlId="formRegisterUsername">
                 <Form.Label>E-mail</Form.Label>
@@ -70,20 +68,18 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         </Form>
     </>) : (<></>);
 
-    let noBuenoPasswordMessage = !isLogged && !goodPass ? (<>
+    let noBuenoPasswordMessage = !loginState.state.isLogged && !goodPass ? (<>
         Passwords don't match!
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<>
+    let userMessage = loginState.state.isLogged ? (<>
         You are logged in as {ReactSession.getValue('username')}.
     </>) : (<></>);
 
     return <>
-        <div className="p-5">
             {registerForm}
             {noBuenoPasswordMessage}
             {userMessage}
-        </div>
     </>;
 }
 

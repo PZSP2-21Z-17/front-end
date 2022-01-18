@@ -1,4 +1,8 @@
-export const NotFound = () => {
+import { FunctionComponent } from 'react';
+
+type NotFoundProps = {};
+
+export const NotFound: FunctionComponent<NotFoundProps> = () => {
     return <p>Page not found!</p>;
 }
 

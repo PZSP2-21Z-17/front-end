@@ -16,11 +16,9 @@ export const Tags: FunctionComponent<TagsProps> = () => {
     const [tag, setTag] = useState(Tag.createEmpty());
     const [tagList, setTagList] = useState([] as Tag[]);
 
-    let isLogged = loginState.state.isLogged;
-
     const handleTagSubmit = (event: any) => {
         event.preventDefault();
-        if (isLogged) {
+        if (loginState.state.isLogged) {
             FetchAPI.postTagCreate(tag).then(
                 (json: any) => {
                     refresh();
@@ -29,7 +27,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         }
     }
 
-    let tagForm = isLogged ? (<>
+    let tagForm = loginState.state.isLogged ? (<>
         <Form onSubmit={handleTagSubmit}>
             <Form.Group className="mb-3" controlId="formTagName">
                 <Form.Label>Tag name</Form.Label>
@@ -42,9 +40,8 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         </Form>
     </>) : (<></>);
  
-    let isTagListEmpty = tagList.length === 0;
     const getTags = () => {
-        if (isTagListEmpty) {
+        if (loginState.state.isLogged) {
             FetchAPI.getTags().then(
                 (jsonArray: []) => {
                     if (jsonArray.length > 0) setArray(setTagList, jsonArray.map(json => Tag.fromJSON(json)))
@@ -53,22 +50,22 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         }
     };
 
-    useEffect(getTags, [isTagListEmpty]);
+    useEffect(getTags, [loginState.state.isLogged]);
 
-    let tagListView = (isLogged && tagList.length > 0) ? (<>
+    let tagListView = (loginState.state.isLogged && tagList.length > 0) ? (<>
         <ListGroup>
             {tagList.map((tag_) => <ListGroupItem key={tag_.tag_code}>{tag_.tag_code} - {tag_.name}</ListGroupItem>)}
         </ListGroup>
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<></>) : (<>Log in to create tags.</>);
+    let userMessage = loginState.state.isLogged ? (<></>) : (<>Log in to create tags.</>);
 
-    return <div className="p-5">
+    return <>
         {userMessage}
         {tagListView}
         <p></p>
         {tagForm}
-    </div>;
+    </>;
 }
 
 export default Tags;

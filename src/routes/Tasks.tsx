@@ -17,8 +17,6 @@ export const Tasks = () => {
         return task;
     });
 
-    let isLogged = loginState.state.isLogged;
-
     const taskEditorCallback = {
         setAnswerCount: (count: number) => {
             if (editedTask.answers.length > count)
@@ -40,7 +38,7 @@ export const Tasks = () => {
             .map(a => new Answer(undefined, a.content, a.isCorrect)));
         console.log(editedTask);
         console.log(task.toJson());
-        if (isLogged) {
+        if (loginState.state.isLogged) {
             FetchAPI.postTaskCreate(task).then(
                 () => {
                     updateTasks();
@@ -51,18 +49,18 @@ export const Tasks = () => {
     }
 
     const updateTasks = () => {
-        if (!isLogged) return;
+        if (!loginState.state.isLogged) return;
         FetchAPI.getAllTasks().then((fetchedTasks: any) => {
             setTaskList(fetchedTasks.map((fetchedTask: any) => Task.fromJson(fetchedTask)));
         });
     }
 
-    useEffect(updateTasks, [isLogged]);
+    useEffect(updateTasks, [loginState.state.isLogged]);
 
-    if (!isLogged)
-        return <div className="p-5">Log in to create tasks.</div>;
+    if (!loginState.state.isLogged)
+        return <>Log in to create tasks.</>;
 
-    return <div className="p-5" style={{ overflow: "auto", height: "100%"}}>
+    return <div style={{ overflow: "auto", height: "100%"}}>
         <Accordion className="mb-3">
             {taskList.map(task => (
                 <Accordion.Item key={task.id} eventKey={task.id!.toString()}>

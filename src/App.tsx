@@ -8,7 +8,7 @@ import { refresh } from './Common';
 
 let userOptions = (ReactSession.checkValue('username')) ? (<>
     <li className="nav-item">
-        You are logged in as {ReactSession.getValue('username')}.
+        <Link className="nav-link" to="#">You are logged in as {ReactSession.getValue('username')}.</Link>
     </li>
     <li className="nav-item">
         <Link className="nav-link" to="/user">User</Link>
@@ -93,7 +93,9 @@ export const App = () => {
                         </ul>
                     </nav>
                     <main className="flex-grow-1">
-                        <Outlet />
+                        <div className="p-5">
+                            <Outlet />
+                        </div>
                     </main>
                 </div>
             </div>

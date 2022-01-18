@@ -16,11 +16,9 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
     const [subject, setSubject] = useState(Subject.createEmpty());
     const [subjectList, setSubjectList] = useState([] as Subject[]);
 
-    let isLogged = loginState.state.isLogged;
-
     const handleSubjectSubmit = (event: any) => {
         event.preventDefault();
-        if (isLogged) {
+        if (loginState.state.isLogged) {
             FetchAPI.postSubjectCreate(subject).then(
                 (json: any) => {
                     refresh();
@@ -29,7 +27,7 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         }
     }
 
-    let subjectForm = isLogged ? (<>
+    let subjectForm = loginState.state.isLogged ? (<>
         <Form onSubmit={handleSubjectSubmit}>
             <Form.Group className="mb-3" controlId="formSubjectCode">
                 <Form.Label>Subject code</Form.Label>
@@ -47,9 +45,8 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         </Form>
     </>) : (<></>);
 
-    let isSubjectListEmpty = subjectList.length === 0;
     const getSubjects = () => {
-        if (isSubjectListEmpty) {
+        if (loginState.state.isLogged) {
             FetchAPI.getSubjects().then(
                 (jsonArray: []) => {
                     if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
@@ -58,22 +55,22 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         }
     };
 
-    useEffect(getSubjects, [isSubjectListEmpty]);
+    useEffect(getSubjects, [loginState.state.isLogged]);
 
-    let subjectListView = (isLogged && subjectList.length > 0) ? (<>
+    let subjectListView = (loginState.state.isLogged && subjectList.length > 0) ? (<>
         <ListGroup>
             {subjectList.map((subject_) => <ListGroupItem key={subject_.subject_code}>{subject_.subject_code} - {subject_.name}</ListGroupItem>)}
         </ListGroup>
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<></>) : (<>Log in to create subjects.</>);
+    let userMessage = loginState.state.isLogged ? (<></>) : (<>Log in to create subjects.</>);
 
-    return <div className="p-5">
+    return <>
         {userMessage}
         {subjectListView}
         <p></p>
         {subjectForm}
-    </div>;
+    </>;
 }
 
 export default Subjects;

@@ -14,11 +14,9 @@ export const Login: FunctionComponent<LoginProps> = () => {
     const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
 
-    let isLogged = loginState.state.isLogged;
-
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
-        if (!isLogged) {
+        if (!loginState.state.isLogged) {
             FetchAPI.postUserLogin(user).then(
                 (json: any) => {
                     ReactSession.setValue('username', json['e_mail']);
@@ -30,7 +28,7 @@ export const Login: FunctionComponent<LoginProps> = () => {
         }
     }
 
-    let loginForm = !isLogged ? (<>
+    let loginForm = !loginState.state.isLogged ? (<>
         <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3" controlId="formLoginUsername">
                 <Form.Label>E-mail</Form.Label>
@@ -47,15 +45,13 @@ export const Login: FunctionComponent<LoginProps> = () => {
         </Form>
     </>) : (<></>);
 
-    let userMessage = isLogged ? (<>
+    let userMessage = loginState.state.isLogged ? (<>
         You are logged in as {loginState.state.username}.
     </>) : (<></>);
 
     return <>
-        <div className="p-5">
             {userMessage}
             {loginForm}
-        </div>
     </>;
 }
 
