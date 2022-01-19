@@ -3,7 +3,7 @@ import Answer, { FetchedAnswer } from './Answer';
 export type FetchedTask = {
     answers: FetchedAnswer[];
     author_id?: number;
-    contents: string;
+    content: string;
     date_creation: string;
     is_visible: string;
     score: number;
@@ -25,7 +25,7 @@ export class Task {
     toJson = () => {
         return {
             answers: this.answers.map(answer => answer.toJson()),
-            contents: this.content,
+            content: this.content,
             date_creation: '2019-11-08T09:00:37.247426',
             is_visible: 'Y',
             score: 1,
@@ -37,7 +37,7 @@ export class Task {
     static fromJson(json: FetchedTask) {
         let task = new Task();
         task.id = json.task_id;
-        task.content = json.contents;
+        task.content = json.content;
         task.answers = json.answers.map(fetchedAnswer => Answer.fromJson(fetchedAnswer));
         return task;
     }
