@@ -13,6 +13,7 @@ type LoginProps = {};
 export const Login: FunctionComponent<LoginProps> = () => {
     const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
+    const [error, setError] = useState(false);
 
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
@@ -23,6 +24,10 @@ export const Login: FunctionComponent<LoginProps> = () => {
                     loginState.setUsername(json['e_mail']);
                     loginState.setIsInProgress(false);
                     refresh();
+                }
+            ).catch(
+                () => {
+                    setError(true);
                 }
             )
         }
@@ -49,9 +54,14 @@ export const Login: FunctionComponent<LoginProps> = () => {
         You are logged in as {loginState.state.username}.
     </>) : (<></>);
 
+    let errorMessage = error ? (<p style={{color:"red"}}>
+        Invalid username or password!
+    </p>) : (<p></p>);
+
     return <>
             {userMessage}
             {loginForm}
+            {errorMessage}
     </>;
 }
 
