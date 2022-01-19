@@ -65,12 +65,14 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
 
     let userMessage = loginState.state.isLogged ? (<></>) : (<>Log in to create subjects.</>);
 
-    return <>
-        {userMessage}
-        {subjectListView}
-        <p></p>
-        {subjectForm}
-    </>;
+    return (
+        <>
+            {userMessage}
+            {subjectListView}
+            <p></p>
+            {subjectForm}
+        </>
+    );
 }
 
 export default Subjects;

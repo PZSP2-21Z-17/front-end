@@ -89,7 +89,7 @@ ${flattenedTasks}
 
     if (!isLogged) return (<div className="p-5">Log in to create exams.</div>);
     return (
-        <div className="d-flex h-100">
+        <>
             <div className="bg-light bg-gradient p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>
                 <p className="h2">Exam creation</p>
                 <Form className="mb-3">
@@ -135,7 +135,7 @@ ${flattenedTasks}
             <div className="border border-dark border-2" style={{ flexBasis: '50%' }}>
                 <iframe title="pdf-preview" ref={iframeRef} className="d-block w-100 h-100"></iframe>
             </div>
-        </div>
+        </>
     );
 }
 

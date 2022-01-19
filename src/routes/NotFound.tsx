@@ -3,7 +3,11 @@ import { FunctionComponent } from 'react';
 type NotFoundProps = {};
 
 export const NotFound: FunctionComponent<NotFoundProps> = () => {
-    return <p>Page not found!</p>;
+    return (
+        <>
+            Page not found!
+        </>
+    );
 }
 
 export default NotFound;

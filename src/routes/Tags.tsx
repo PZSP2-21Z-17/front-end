@@ -31,7 +31,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         <Form onSubmit={handleTagSubmit}>
             <Form.Group className="mb-3" controlId="formTagName">
                 <Form.Label>Tag name</Form.Label>
-                <Form.Control type="text" placeholder="Enter tag name" className="w-25" onChange={e => setTag(new Tag(e.target.value.substr(0, 3), e.target.value))}/>
+                <Form.Control type="text" placeholder="Enter tag name" className="w-25" onChange={e => setTag(new Tag(Number(e.target.value), e.target.value))}/>
             </Form.Group>
 
             <Button type="submit" variant="primary" className="mb-3">
@@ -54,18 +54,20 @@ export const Tags: FunctionComponent<TagsProps> = () => {
 
     let tagListView = (loginState.state.isLogged && tagList.length > 0) ? (<>
         <ListGroup>
-            {tagList.map((tag_) => <ListGroupItem key={tag_.tag_code}>{tag_.tag_code} - {tag_.name}</ListGroupItem>)}
+            {tagList.map((tag_) => <ListGroupItem key={tag_.tag_id}>{tag_.tag_id} - {tag_.name}</ListGroupItem>)}
         </ListGroup>
     </>) : (<></>);
 
     let userMessage = loginState.state.isLogged ? (<></>) : (<>Log in to create tags.</>);
 
-    return <>
-        {userMessage}
-        {tagListView}
-        <p></p>
-        {tagForm}
-    </>;
+    return (
+        <>
+            {userMessage}
+            {tagListView}
+            <p></p>
+            {tagForm}
+        </>
+    );
 }
 
 export default Tags;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { matchPath, useLocation, Link, Outlet } from 'react-router-dom';
 import { JournalText, Question, Hash, BookHalf } from 'react-bootstrap-icons';
 
 import { LoginState, LoginContext } from './Context';
@@ -26,6 +26,8 @@ let userOptions = (ReactSession.checkValue('username')) ? (<>
 </>)
 
 export const App = () => {
+    const location = useLocation();
+    const shouldUsePadding = !matchPath(location.pathname, '/exams');
     const [loginState, setLoginState] = useState<LoginState>({
         isLogged: false,
         username: null
@@ -93,7 +95,8 @@ export const App = () => {
                         </ul>
                     </nav>
                     <main className="flex-grow-1">
-                        <div className="p-5">
+                        <div className={shouldUsePadding ? 'p-5' : 'd-flex h-100'}
+                            style={shouldUsePadding ? { overflow: "auto", height: "100%" } : {}}>
                             <Outlet />
                         </div>
                     </main>

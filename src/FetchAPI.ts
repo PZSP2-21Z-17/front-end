@@ -3,8 +3,39 @@ import Subject from "./entities/Subject";
 import Tag from "./entities/Tag";
 import Task from "./entities/Task";
 
+export type TaskSearchCriteria = {
+    subjectCode?: Subject['subject_code'];
+    tagIds: Tag['tag_id'][];
+    searchString?: string;
+    pageOffset?: number;
+};
+
+export type TaskSearchTipCriteria = {
+    searchString?: string;
+    pageOffset?: number;
+};
+
 export default class FetchAPI {
     static getAllTasks = () => fetchData('/task/all_with_answers/', 'GET');
+    static findTasks = (criteria: TaskSearchCriteria) => {
+        let searchParams = new URLSearchParams();
+        if (criteria.subjectCode !== undefined)
+            searchParams.append('subject_code', criteria.subjectCode);
+        criteria.tagIds.forEach(e => searchParams.append('tags', e.toString()));
+        if (criteria.searchString !== undefined)
+            searchParams.append('search_string', criteria.searchString);
+        if (criteria.pageOffset !== undefined)
+            searchParams.append('offset', criteria.pageOffset.toString());
+        return fetchData(`/task/find/?${searchParams.toString()}`, 'GET');
+    };
+    static getTaskSearchTips = (criteria: TaskSearchTipCriteria) => {
+        let searchParams = new URLSearchParams();
+        if (criteria.searchString !== undefined)
+            searchParams.append('search_string', criteria.searchString);
+        if (criteria.pageOffset !== undefined)
+            searchParams.append('offset', criteria.pageOffset.toString());
+        return fetchData(`/task/search_tips/?${searchParams.toString()}`, 'GET');
+    };
     static getSubjects = () => fetchData('subject/all/', 'GET');
     static getTags = () => fetchData('tag/all/', 'GET');
 
