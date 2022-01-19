@@ -58,11 +58,13 @@ export const Login: FunctionComponent<LoginProps> = () => {
         Invalid username or password!
     </p>) : (<p></p>);
 
-    return <>
+    return (
+        <>
             {userMessage}
             {loginForm}
             {errorMessage}
-    </>;
+        </>
+    );
 }
 
 export default Login;

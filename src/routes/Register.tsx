@@ -76,11 +76,13 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         You are logged in as {ReactSession.getValue('username')}.
     </>) : (<></>);
 
-    return <>
+    return (
+        <>
             {registerForm}
             {noBuenoPasswordMessage}
             {userMessage}
-    </>;
+        </>
+    );
 }
 
 export default Register;
