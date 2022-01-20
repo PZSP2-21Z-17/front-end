@@ -1,9 +1,9 @@
 import { FunctionComponent, useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { LoginContext } from '../Context';
-import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
 import User from '../entities/User';
 
@@ -14,6 +14,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
     const [user, setUser] = useState(User.createEmpty());
     const [confirmPass, setConfirmPass] = useState('');
     const [goodPass, setGoodPass] = useState(true);
+    const navigate = useNavigate();
 
     const validateForm = () => {
         return (confirmPass === user.password);
@@ -27,7 +28,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
                     loginState.setUsername(user.e_mail);
                     loginState.setIsLogged(false);
                     FetchAPI.postUserLogin(user).then(() => {
-                        refresh();
+                        navigate("/", {replace: false});
                     })
                 })
             } else {

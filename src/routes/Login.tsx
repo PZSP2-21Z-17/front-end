@@ -1,9 +1,9 @@
 import { FunctionComponent, useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { LoginContext } from '../Context';
-import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
 import User from '../entities/User';
 
@@ -13,14 +13,15 @@ export const Login: FunctionComponent<LoginProps> = () => {
     const loginState = useContext(LoginContext);
     const [user, setUser] = useState(User.createEmpty());
     const [error, setError] = useState(false);
+    const navigate = useNavigate();
 
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
         if (!loginState.state.isLogged) {
             FetchAPI.postUserLogin(user).then(() => {
                 loginState.setUsername(user.e_mail);
-                loginState.setIsLogged(false);
-                refresh();
+                loginState.setIsLogged(true);
+                navigate("/", {replace: false});
             }).catch(() => {
                 setError(true);
             })
