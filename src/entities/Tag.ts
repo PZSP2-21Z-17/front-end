@@ -9,12 +9,12 @@ export class Tag {
 
     toJSON() {
         return {
-            tag_code: this.tag_id,
+            tag_id: this.tag_id,
             name: this.name
         };
     }
 
-    static fromJSON(json: {tag_id: number, name: string}) {
+    static fromJSON(json: { tag_id: number, name: string }) {
         return new Tag(json['tag_id'], json['name']);
     }
 
