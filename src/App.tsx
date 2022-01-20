@@ -3,27 +3,7 @@ import { matchPath, useLocation, Link, Outlet } from 'react-router-dom';
 import { JournalText, Question, Hash, BookHalf } from 'react-bootstrap-icons';
 
 import { LoginState, LoginContext } from './Context';
-import ReactSession from './ReactSession';
-import { refresh } from './Common';
-
-let userOptions = (ReactSession.checkValue('username')) ? (<>
-    <li className="nav-item">
-        <Link className="nav-link" to="#">You are logged in as {ReactSession.getValue('username')}.</Link>
-    </li>
-    <li className="nav-item">
-        <Link className="nav-link" to="/user">User</Link>
-    </li>
-    <li className="nav-item">
-        <Link className="nav-link" to="/" onClick={() => {ReactSession.removeValue('username'); refresh();}}>Logout</Link>
-    </li>
-</>) : (<>
-    <li className="nav-item">
-        <Link className="nav-link" to="/login">Login</Link>
-    </li>
-    <li className="nav-item">
-        <Link className="nav-link" to="/register">Register</Link>
-    </li>
-</>)
+import FetchAPI from './FetchAPI';
 
 export const App = () => {
     const location = useLocation();
@@ -40,19 +20,47 @@ export const App = () => {
     }
 
     useEffect(() => {
-        let user = ReactSession.getValue('username');
-        if (user) {
-            setLoginStateUsername(user);
-            setLoginStateIsLogged(true);
-        }
+        FetchAPI.getUserLogged().then(
+            (json: any) => {
+                setLoginStateUsername(json.e_mail);
+                setLoginStateIsLogged(true);}
+        )
     }, []);
 
     const loginProvider = {
         state: loginState,
         setState: setLoginState,
-        setIsInProgress: setLoginStateIsLogged,
+        setIsLogged: setLoginStateIsLogged,
         setUsername: setLoginStateUsername
     };
+
+    const logout = () => {
+        FetchAPI.postUserLogout().then(
+            (json: any) => {
+                loginProvider.setUsername(null);
+                loginProvider.setIsLogged(false);
+            }
+        );
+    }
+
+    const navBar = loginProvider.state.isLogged ? (<>
+        <li className="nav-item">
+            <Link className="nav-link" to="#">You are logged in as {loginProvider.state.username}.</Link>
+        </li>
+        <li className="nav-item">
+            <Link className="nav-link" to="/user">User</Link>
+        </li>
+        <li className="nav-item">
+            <Link className="nav-link" to="/" onClick={() => logout()}>Logout</Link>
+        </li>
+    </>) : (<>
+        <li className="nav-item">
+            <Link className="nav-link" to="/login">Login</Link>
+        </li>
+        <li className="nav-item">
+            <Link className="nav-link" to="/register">Register</Link>
+        </li>
+    </>)
 
     return (
         <LoginContext.Provider value={loginProvider}>
@@ -61,7 +69,7 @@ export const App = () => {
                     <Link className="navbar-brand mb-2" to="/">Front end</Link>
                     <div className="d-flex flex-row-reverse w-100 mb-2">
                         <ul className="navbar-nav">
-                            {userOptions}
+                            {navBar}
                         </ul>
                     </div>
                 </header>

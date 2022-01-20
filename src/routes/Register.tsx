@@ -1,11 +1,10 @@
-import React, { FunctionComponent, useState, useContext } from 'react';
+import { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { LoginContext } from '../Context';
 import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
-import ReactSession from '../ReactSession';
 import User from '../entities/User';
 
 type RegisterProps = {};
@@ -24,12 +23,13 @@ export const Register: FunctionComponent<RegisterProps> = () => {
         event.preventDefault();
         if (!loginState.state.isLogged) {
             if (validateForm()) {
-                FetchAPI.postUserRegister(user).then(
-                    (json: any) => {
-                        ReactSession.setValue('username', json['e_mail']);
+                FetchAPI.postUserRegister(user).then(() => {
+                    loginState.setUsername(user.e_mail);
+                    loginState.setIsLogged(false);
+                    FetchAPI.postUserLogin(user).then(() => {
                         refresh();
-                    }
-                )
+                    })
+                })
             } else {
                 setGoodPass(false);
             }
@@ -73,7 +73,7 @@ export const Register: FunctionComponent<RegisterProps> = () => {
     </>) : (<></>);
 
     let userMessage = loginState.state.isLogged ? (<>
-        You are logged in as {ReactSession.getValue('username')}.
+        You are logged in as {loginState.state.username}.
     </>) : (<></>);
 
     return (

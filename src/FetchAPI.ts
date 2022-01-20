@@ -17,7 +17,7 @@ export type TaskSearchTipCriteria = {
 
 export default class FetchAPI {
     static getAllTasks = () => fetchData('/task/all_with_answers/', 'GET');
-    static findTasks = (criteria: TaskSearchCriteria) => {
+    static getTasks = (criteria: TaskSearchCriteria) => {
         let searchParams = new URLSearchParams();
         if (criteria.subjectCode !== undefined)
             searchParams.append('subject_code', criteria.subjectCode);
@@ -38,18 +38,20 @@ export default class FetchAPI {
     };
     static getSubjects = () => fetchData('subject/all/', 'GET');
     static getTags = () => fetchData('tag/all/', 'GET');
+    static getUserLogged = () => fetchData('user/is_logged/', 'GET');
 
+    static postUserLogout = () => fetchData('user/logout', 'POST');
     static postUserLogin = (user: User) => fetchData('user/login/', 'POST', user);
     static postUserRegister = (user: User) => fetchData('user/register/', 'POST', user);
     static postSubjectCreate = (subject: Subject) => fetchData('subject/create/', 'POST', subject);
     static postTagCreate = (tag: Tag) => fetchData('tag/create/', 'POST', tag);
     static postTaskCreate = (task: Task) => fetchData('task/create_with_answers/', 'POST', task.toJson());
-
 }
 
 export function fetchData(url: string, method: string = 'GET', payload?: {}) {
     const config: RequestInit = {
-        method: method
+        method: method,
+        credentials: 'include'
     };
     if (payload !== undefined) {
         config.headers = {

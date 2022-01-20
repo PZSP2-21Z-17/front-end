@@ -1,11 +1,10 @@
-import React, { FunctionComponent, useState, useContext } from 'react';
+import { FunctionComponent, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { LoginContext } from '../Context';
 import { refresh } from '../Common'
 import FetchAPI from '../FetchAPI';
-import ReactSession from '../ReactSession';
 import User from '../entities/User';
 
 type LoginProps = {};
@@ -18,18 +17,13 @@ export const Login: FunctionComponent<LoginProps> = () => {
     const handleLoginSubmit = (event: any) => {
         event.preventDefault();
         if (!loginState.state.isLogged) {
-            FetchAPI.postUserLogin(user).then(
-                (json: any) => {
-                    ReactSession.setValue('username', json['e_mail']);
-                    loginState.setUsername(json['e_mail']);
-                    loginState.setIsInProgress(false);
-                    refresh();
-                }
-            ).catch(
-                () => {
-                    setError(true);
-                }
-            )
+            FetchAPI.postUserLogin(user).then(() => {
+                loginState.setUsername(user.e_mail);
+                loginState.setIsLogged(false);
+                refresh();
+            }).catch(() => {
+                setError(true);
+            })
         }
     }
 
