@@ -26,7 +26,7 @@ export default function SearchWithResults(props: SearchWithResultsProps) {
             searchCriteria = { ...searchCriteria, subjectCode: options.filter(e => e.type === 'subject')[0].value };
         if (options && containsAnyContent(options))
             searchCriteria = { ...searchCriteria, searchString: options.filter(e => e.type === 'content')[0].value };
-        FetchAPI.findTasks(searchCriteria).then((fetchedTasks: any) => {
+        FetchAPI.getTasks(searchCriteria).then((fetchedTasks: any) => {
             setSearchResults(fetchedTasks.map((fetchedTask: any) => Task.fromJson(fetchedTask)));
         });
     }
