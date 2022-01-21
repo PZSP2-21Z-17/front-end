@@ -6,13 +6,14 @@ import FetchAPI from './FetchAPI';
 import MainLayout from './components/MainLayout';
 import Home from './routes/Home';
 import NotFound from './routes/NotFound';
-import Exams from './routes/Exams';
+import ExamsCreator from './routes/ExamsCreator';
 import Tasks from './routes/Tasks';
 import Tags from './routes/Tags';
 import Subjects from './routes/Subjects';
 import Login from './routes/Login';
 import User from './routes/User';
 import Register from './routes/Register';
+import ExamsBrowser from './routes/ExamsBrowser';
 
 export const App = () => {
     const [loginState, setLoginState] = useState<LoginState>({
@@ -46,7 +47,10 @@ export const App = () => {
             <Routes>
                 <Route path="/" element={<MainLayout />}>
                     <Route path="" element={<Home />} />
-                    <Route path="exams" element={<Exams />} />
+                    <Route path="exams">
+                        <Route index element={<ExamsBrowser />} />
+                        <Route path="create" element={<ExamsCreator />} />
+                    </Route>
                     <Route path="tasks" element={<Tasks />} />
                     <Route path="tags" element={<Tags />} />
                     <Route path="subjects" element={<Subjects />} />

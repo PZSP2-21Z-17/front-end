@@ -8,7 +8,7 @@ type MainLayoutProps = {};
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = () => {
     const location = useLocation();
-    const shouldUsePadding = !matchPath(location.pathname, '/exams');
+    const shouldUsePadding = !matchPath(location.pathname, '/exams') && !matchPath(location.pathname, '/exams/create');
 
     return (
     <div id="container" className="container-fluid vh-100 p-0 d-flex flex-column">
@@ -23,9 +23,15 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = () => {
                         </Link>
                     </li>
                     <li className="nav-item">
+                        <Link className="nav-link link-light" to="/exams/create">
+                        <JournalText className="me-2" />
+                            Exam creator
+                        </Link>
+                    </li>
+                    <li className="nav-item">
                         <Link className="nav-link link-light" to="/exams">
                         <JournalText className="me-2" />
-                            Exams
+                            Browse exams
                         </Link>
                     </li>
                     <li className="nav-item">

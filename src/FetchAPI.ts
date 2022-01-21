@@ -48,6 +48,9 @@ export default class FetchAPI {
     static getSubjects = () => fetchData('subject/all/', 'GET');
     static getTags = () => fetchData('tag/all/', 'GET');
     static getUserLogged = () => fetchData('user/is_logged/', 'GET')
+    static getExam = (exam_id: number) => fetchData(`exam/${exam_id}/groups/`);
+    static getExams = () => fetchData(`exam/all/`);
+    static getExamGroup = (exam_id: number, group_nr: number) => fetchData(`group/${exam_id}/${group_nr}/`);
 
     static postUserLogout = () => fetchData('user/logout', 'POST');
     static postUserLogin = (user: User) => fetchData('user/login/', 'POST', user);

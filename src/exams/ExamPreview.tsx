@@ -7,6 +7,7 @@ type ExamPreviewProps = {
     title: string;
     preface: string;
     tasks: Task[];
+    defaultContent?: string;
 };
 
 export default function ExamPreview(props: ExamPreviewProps) {
@@ -40,7 +41,7 @@ export default function ExamPreview(props: ExamPreviewProps) {
 
 ${quotedPreface}
 
-${flattenedTasks.length ? flattenedTasks : 'Add some tasks to the pool...'}
+${flattenedTasks.length ? flattenedTasks : props.defaultContent}
             </textarea>
             <img id="loader" src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif">
         `);
