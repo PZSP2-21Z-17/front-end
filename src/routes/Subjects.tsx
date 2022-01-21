@@ -5,7 +5,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import { LoginContext } from '../Context';
 import FetchAPI from '../FetchAPI';
-import { setArray, refresh } from '../Common';
+import { setArray, addToArray, gSortPred } from '../Common';
 import { ListGroupItem } from 'react-bootstrap';
 import Subject from '../entities/Subject';
 
@@ -19,11 +19,10 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
     const handleSubjectSubmit = (event: any) => {
         event.preventDefault();
         if (loginState.state.isLogged) {
-            FetchAPI.postSubjectCreate(subject).then(
-                (json: any) => {
-                    refresh();
-                }
-            )
+            FetchAPI.postSubjectCreate(subject).then((json: any) => {
+                const newSubject = new Subject(json['subject_code'], subject.name, subject.in_use);
+                addToArray(setSubjectList, subjectList, newSubject);
+            })
         }
     }
 
@@ -31,12 +30,12 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         <Form onSubmit={handleSubjectSubmit}>
             <Form.Group className="mb-3" controlId="formSubjectCode">
                 <Form.Label>Subject code</Form.Label>
-                <Form.Control type="text" placeholder="Enter subject code" className="w-25" onChange={e => subject.modify(setSubject, 'subject_code', e.target.value)}/>
+                <Form.Control type="text" placeholder="Enter subject code" onChange={e => subject.modify(setSubject, 'subject_id', e.target.value)}/>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formSubjectName">
                 <Form.Label>Subject name</Form.Label>
-                <Form.Control type="text" placeholder="Enter subject name" className="w-25" onChange={e => subject.modify(setSubject, 'name', e.target.value)}/>
+                <Form.Control type="text" placeholder="Enter subject name" onChange={e => subject.modify(setSubject, 'name', e.target.value)}/>
             </Form.Group>
 
             <Button type="submit" variant="primary" className="mb-3">
@@ -55,11 +54,31 @@ export const Subjects: FunctionComponent<SubjectsProps> = () => {
         }
     };
 
+    const removeSubject = (subject: Subject) => {
+        FetchAPI.deleteSubject(subject).then(() => {
+            let newSubjectList = subjectList.filter((other: Subject) => subject.subject_id !== other.subject_id);
+            setSubjectList(newSubjectList);
+        })
+    }
+
+    const generateButton = (subject: Subject) => {
+        if (subject.in_use)
+            return <></>
+        else
+            return (<Button variant="danger" onClick={() => removeSubject(subject)}>X</Button>);
+    }
+
     useEffect(getSubjects, [loginState.state.isLogged]);
 
     let subjectListView = (loginState.state.isLogged && subjectList.length > 0) ? (<>
         <ListGroup>
-            {subjectList.map((subject_) => <ListGroupItem key={subject_.subject_code}>{subject_.subject_code} - {subject_.name}</ListGroupItem>)}
+            {subjectList.sort((a: Subject, b: Subject) => gSortPred(a, b, 'subject_id')).map((subject_) => 
+            <div className="d-flex mb-1" key={subject_.subject_id}>
+                <ListGroupItem className="flex-grow-1">
+                    {subject_.subject_id} - {subject_.name}
+                </ListGroupItem>
+                {generateButton(subject_)}
+            </div>)}
         </ListGroup>
     </>) : (<></>);
 
