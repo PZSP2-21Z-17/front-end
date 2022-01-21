@@ -15,6 +15,14 @@ export type TaskSearchTipCriteria = {
     pageOffset?: number;
 };
 
+export type ExamGenerationRequest = {
+    description: string;
+    content: string;
+    tasks_per_exam: number;
+    group_count: number;
+    task_ids: number[];
+};
+
 export default class FetchAPI {
     static getAllTasks = () => fetchData('/task/all_with_answers/', 'GET');
     static getTasks = (criteria: TaskSearchCriteria) => {
@@ -47,6 +55,7 @@ export default class FetchAPI {
     static postSubjectCreate = (subject: Subject) => fetchData('subject/create/', 'POST', subject);
     static postTagCreate = (tag: Tag) => fetchData('tag/create/', 'POST', tag);
     static postTaskCreate = (task: Task) => fetchData('task/create_with_answers/', 'POST', task.toJson());
+    static postExamGenerate = (data: ExamGenerationRequest) => fetchData('exam/generate/', 'POST', data);
 
     static deleteTag = (tag: Tag) => fetchData('tag/delete/', 'DELETE', {tag_id: tag.tag_id});
     static deleteSubject = (subject: Subject) => fetchData('subject/delete/', 'DELETE', {subject_code: subject.subject_id});
