@@ -14,7 +14,7 @@ export default function Tasks() {
         if (!loginState.state.isLogged)
             return;
         let task = new Task(undefined, addedTask.content, addedTask.answers
-            .map(a => new Answer(undefined, a.content, a.isCorrect)), addedTask.subject_code);
+            .map(a => new Answer(undefined, a.content, a.isCorrect)), addedTask.subject_code, addedTask.is_visible);
         task.tags = addedTask.tags;
         console.log(task);
         FetchAPI.postTaskCreate(task).then(

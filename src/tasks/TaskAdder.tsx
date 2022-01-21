@@ -64,14 +64,21 @@ export default function TaskAdder(props: TaskAdderProps) {
             <option key={subject_.subject_id} value={subject_.subject_id}>{subject_.name}</option>
         )
     }</>)
+
+    const editPrivacy = (a: boolean) => {
+        addToDict(setEditedTask, editedTask, 'is_visible', a? 'Y': 'N');
+    }
     
     return (
         <Form onSubmit={handleSubmit}>
-            <Form.Select onChange={e => addToDict(setEditedTask, editedTask, 'subject_code', e.target.value)}>
+
+            <Form.Select className="mb-2" onChange={e => addToDict(setEditedTask, editedTask, 'subject_code', e.target.value)}>
                 <option>Select subject</option>
                 {generateSubjectSelect}
             </Form.Select>
             <TagSearchBar onSubmit={updateSearchResults} />
+            <Form.Check className="mb-2" label="Public task" onChange={e => editPrivacy(e.target.checked)} />
+
             <Form.Group as={Row} className="mb-3" controlId="formTaskName">
                 <Form.Label column sm={2}>Task content</Form.Label>
                 <Col sm={9}>
