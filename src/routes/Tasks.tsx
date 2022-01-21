@@ -10,10 +10,13 @@ export default function Tasks() {
     const loginState = useContext(LoginContext);
 
     const handleTaskSubmit = (addedTask: Task) => {
+        console.log(addedTask);
         if (!loginState.state.isLogged)
             return;
         let task = new Task(undefined, addedTask.content, addedTask.answers
-            .map(a => new Answer(undefined, a.content, a.isCorrect)));
+            .map(a => new Answer(undefined, a.content, a.isCorrect)), addedTask.subject_code);
+        task.tags = addedTask.tags;
+        console.log(task);
         FetchAPI.postTaskCreate(task).then(
             () => {
                 alert('Added successfully');

@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 import { Form, Button, Col, Row } from "react-bootstrap";
 import Task from "../entities/Task";
 import Answer from "../entities/Answer";
 import AnswerEditor from "./AnswerEditor";
+import FetchAPI from "../FetchAPI";
 import { addToDict } from '../Common';
+import TagSearchBar from './TagSearchBar';
+import Subject from '../entities/Subject';
+import { setArray } from '../Common';
 
 type TaskAdderProps = {
     onSubmit?: (addedTask: Task) => void;
@@ -15,6 +19,17 @@ export default function TaskAdder(props: TaskAdderProps) {
         task.answers = new Array(4).fill(undefined).map(() => new Answer());
         return task;
     });
+    const [subjectList, setSubjectList] = useState([] as Subject[]);
+
+    const getSubjects = () => {
+        FetchAPI.getSubjects().then(
+            (jsonArray: []) => {
+                if (jsonArray.length > 0) setArray(setSubjectList, jsonArray.map(json => Subject.fromJSON(json)))
+            }
+        );
+    };
+
+    useEffect(getSubjects, []);
 
     const taskEditorCallback = {
         setAnswerCount: (count: number) => {
@@ -34,14 +49,29 @@ export default function TaskAdder(props: TaskAdderProps) {
 
     const handleSubmit = (evt: any) => {
         evt.preventDefault();
-        console.log(editedTask);
         if (!props.onSubmit)
             return;
         props.onSubmit(editedTask);
     };
+
+    const updateSearchResults = (pickedTags: any) => {
+        editedTask['tags'] = pickedTags;
+        setEditedTask(editedTask);
+    }
+
+    const generateSubjectSelect = (<>{
+        subjectList.map((subject_: Subject) => 
+            <option key={subject_.subject_id} value={subject_.subject_id}>{subject_.name}</option>
+        )
+    }</>)
     
     return (
         <Form onSubmit={handleSubmit}>
+            <Form.Select onChange={e => addToDict(setEditedTask, editedTask, 'subject_code', e.target.value)}>
+                <option>Select subject</option>
+                {generateSubjectSelect}
+            </Form.Select>
+            <TagSearchBar onSubmit={updateSearchResults} />
             <Form.Group as={Row} className="mb-3" controlId="formTaskName">
                 <Form.Label column sm={2}>Task content</Form.Label>
                 <Col sm={9}>
@@ -56,9 +86,10 @@ export default function TaskAdder(props: TaskAdderProps) {
                     <Button disabled={editedTask.answers.length < 1} onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length - 1)}>Remove answer</Button>
                 </Col>
             </Form.Group>
-            <Button className="mb-3" type="submit" variant="primary">
-                Submit new task
-            </Button>
         </Form>
     );
 }
+
+//<Button className="mb-3" type="submit" variant="primary">
+//Submit new task
+//</Button>

@@ -47,6 +47,7 @@ export default class FetchAPI {
     };
     static getSubjects = () => fetchData('subject/all/', 'GET');
     static getTags = () => fetchData('tag/all/', 'GET');
+    static getFindTags = (input: string) => fetchData(`tag/find/?search_string=${input}`, 'GET');
     static getUserLogged = () => fetchData('user/is_logged/', 'GET')
     static getExam = (exam_id: number) => fetchData(`exam/${exam_id}/groups/`);
     static getExams = () => fetchData(`exam/all/`);

@@ -2,11 +2,11 @@ import React, { FunctionComponent, useState, useEffect, useContext } from 'react
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { ListGroupItem } from 'react-bootstrap';
 
 import { LoginContext } from '../Context';
 import FetchAPI from '../FetchAPI';
 import { setArray, addToArray, gSortPred } from '../Common';
-import { ListGroupItem } from 'react-bootstrap';
 import Tag from '../entities/Tag';
 
 type TagsProps = {};
