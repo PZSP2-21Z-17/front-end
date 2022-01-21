@@ -13,3 +13,5 @@ export const addToArray = (arraySetter: any, array: any, object: any) => arraySe
 export const setArray = (arraySetter: any, object: any) => arraySetter(object);
 
 export const indexToLetter = (index: number) => String.fromCharCode(97 + index % 26);
+
+export const gSortPred = (one: any, other: any, key: string) => one[key]! === other[key]! ? 0 : one[key]! < other[key]! ? -1 : 1;

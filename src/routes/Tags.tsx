@@ -5,7 +5,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import { LoginContext } from '../Context';
 import FetchAPI from '../FetchAPI';
-import { setArray, refresh } from '../Common';
+import { setArray, addToArray, gSortPred } from '../Common';
 import { ListGroupItem } from 'react-bootstrap';
 import Tag from '../entities/Tag';
 
@@ -19,11 +19,10 @@ export const Tags: FunctionComponent<TagsProps> = () => {
     const handleTagSubmit = (event: any) => {
         event.preventDefault();
         if (loginState.state.isLogged) {
-            FetchAPI.postTagCreate(tag).then(
-                (json: any) => {
-                    refresh();
-                }
-            )
+            FetchAPI.postTagCreate(tag).then((json: any) => {
+                const newTag = new Tag(json['tag_id'], tag.name, tag.in_use);
+                addToArray(setTagList, tagList, newTag);
+            })
         }
     }
 
@@ -31,7 +30,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         <Form onSubmit={handleTagSubmit}>
             <Form.Group className="mb-3" controlId="formTagName">
                 <Form.Label>Tag name</Form.Label>
-                <Form.Control type="text" placeholder="Enter tag name" className="w-25" onChange={e => setTag(new Tag(Number(e.target.value), e.target.value))}/>
+                <Form.Control type="text" placeholder="Enter tag name" onChange={e => setTag(new Tag(Number(e.target.value), e.target.value, false))}/>
             </Form.Group>
 
             <Button type="submit" variant="primary" className="mb-3">
@@ -50,11 +49,33 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         }
     };
 
+    const removeTag = (tag: Tag) => {
+        FetchAPI.deleteTag(tag).then(() => {
+            let newTagList = tagList.filter((other: Tag) => tag.tag_id !== other.tag_id);
+            setTagList(newTagList);
+        }).catch(
+            // 403
+        )
+    }
+
+    const generateButton = (tag: Tag) => {
+        if (tag.in_use)
+            return <></>
+        else
+            return (<Button variant="danger" onClick={() => removeTag(tag)}>X</Button>);
+    }
+
     useEffect(getTags, [loginState.state.isLogged]);
 
     let tagListView = (loginState.state.isLogged && tagList.length > 0) ? (<>
         <ListGroup>
-            {tagList.map((tag_) => <ListGroupItem key={tag_.tag_id}>{tag_.tag_id} - {tag_.name}</ListGroupItem>)}
+            {tagList.sort((a: Tag, b: Tag) => gSortPred(a, b, 'tag_id')).map((tag_) => 
+            <div className="d-flex mb-1" key={tag_.tag_id}>
+                <ListGroupItem className="flex-grow-1">
+                    {tag_.tag_id} - {tag_.name}
+                </ListGroupItem>
+                {generateButton(tag_)}
+            </div>)}
         </ListGroup>
     </>) : (<></>);
 

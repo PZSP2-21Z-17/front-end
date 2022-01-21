@@ -46,6 +46,8 @@ export default class FetchAPI {
     static postSubjectCreate = (subject: Subject) => fetchData('subject/create/', 'POST', subject);
     static postTagCreate = (tag: Tag) => fetchData('tag/create/', 'POST', tag);
     static postTaskCreate = (task: Task) => fetchData('task/create_with_answers/', 'POST', task.toJson());
+
+    static deleteTag = (tag: Tag) => fetchData('tag/delete/', 'DELETE', {tag_id: tag.tag_id});
 }
 
 export function fetchData(url: string, method: string = 'GET', payload?: {}) {
