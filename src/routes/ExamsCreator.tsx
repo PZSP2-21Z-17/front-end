@@ -6,9 +6,11 @@ import SearchWithResults from '../tasks/SearchWithResults';
 import TaskListing, { TaskAction } from '../tasks/TaskListing';
 import FetchAPI from '../FetchAPI';
 import ExamPreview from '../exams/ExamPreview';
+import { useNavigate } from 'react-router-dom';
 
 export const ExamsCreator = () => {
     const loginState = useContext(LoginContext);
+    const navigate = useNavigate();
     const [pool, setPool] = useState([] as Task[]);
     const [title, setTitle] = useState('Exam');
     const [groupCount, setGroupCount] = useState(1);
@@ -33,7 +35,9 @@ export const ExamsCreator = () => {
             task_ids: poolIds,
             group_count: groupCount,
             tasks_per_exam: tasksPerGroup
-        }).then(() => console.log('added ok'));
+        }).then(() => {
+            navigate('/exams', { replace: false });
+        });
     };
 
     const isValid = pool.length >= tasksPerGroup;

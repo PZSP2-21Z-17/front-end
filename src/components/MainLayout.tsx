@@ -18,19 +18,25 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = () => {
                 <ul className="nav nav-pills flex-column mb-auto">
                     <li className="nav-item">
                         <Link className="nav-link link-light" to="/subjects">
-                        <BookHalf className="me-2" />
+                            <BookHalf className="me-2" />
                             Subjects
                         </Link>
                     </li>
                     <li className="nav-item">
+                        <div className="nav-link link-light">
+                            <JournalText className="me-2" />
+                            Exams:
+                        </div>
+                    </li>
+                    <li className="nav-item">
                         <Link className="nav-link link-light" to="/exams/create">
-                        <JournalText className="me-2" />
+                            <JournalText className="me-2" style={{ visibility: 'hidden' }} />
                             Exam creator
                         </Link>
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link link-light" to="/exams">
-                        <JournalText className="me-2" />
+                            <JournalText className="me-2" style={{ visibility: 'hidden' }} />
                             Browse exams
                         </Link>
                     </li>

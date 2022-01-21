@@ -63,6 +63,7 @@ export default class FetchAPI {
 
     static deleteTag = (tag: Tag) => fetchData('tag/delete/', 'DELETE', {tag_id: tag.tag_id});
     static deleteSubject = (subject: Subject) => fetchData('subject/delete/', 'DELETE', {subject_code: subject.subject_id});
+    static deleteExam = (examId: number) => fetchData('exam/delete/', 'POST', { exam_id: examId });
 }
 
 export function fetchData(url: string, method: string = 'GET', payload?: {}) {
