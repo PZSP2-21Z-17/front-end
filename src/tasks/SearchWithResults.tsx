@@ -1,15 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 import { LoginContext } from '../Context';
-import Subject from "../entities/Subject";
-import Tag from "../entities/Tag";
 import Task from "../entities/Task";
 import FetchAPI, { TaskSearchCriteria } from '../FetchAPI';
 import SearchBar, { SubmittedOption, containsAnySubject, containsAnyContent } from "./SearchBar";
-import TaskListing from "./TaskListing";
+import TaskListing, { TaskActionFunc } from "./TaskListing";
 
 type SearchWithResultsProps = {
-    tags: Tag[];
-    subjects: Subject[];
+    chosenTasks?: Task[];
+    chosenTasksVisibility?: boolean;
+    onTaskAction?: TaskActionFunc;
 };
 
 export default function SearchWithResults(props: SearchWithResultsProps) {
@@ -35,6 +34,6 @@ export default function SearchWithResults(props: SearchWithResultsProps) {
 
     return (<>
         <SearchBar onSubmit={updateSearchResults} />
-        <TaskListing tasks={searchResults} />
+        <TaskListing tasks={searchResults} {...props} />
     </>);
 }

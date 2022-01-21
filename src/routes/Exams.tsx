@@ -1,30 +1,24 @@
 import { useState, useRef, useEffect, useContext } from 'react';
-import { Row, Col, Button, Form, FormLabel, FormGroup, FormControl, Table } from 'react-bootstrap';
-
+import { Row, Col, Button, Form, FormLabel, FormGroup, FormControl } from 'react-bootstrap';
 import { LoginContext } from '../Context';
 import Task from '../entities/Task';
-import SelectableTaskRow from '../exams/SelectableTaskRow';
 import { indexToLetter } from '../Common';
-import FetchAPI from '../FetchAPI';
+import SearchWithResults from '../tasks/SearchWithResults';
+import TaskListing, { TaskAction } from '../tasks/TaskListing';
 
 export const Exams = () => {
     const loginState = useContext(LoginContext);
-    const [tasks, setTasks] = useState([] as Task[]);
-    const [taskSelection, setTaskSelection] = useState(tasks.map(() => true));
+    const [pool, setPool] = useState([] as Task[]);
     const [title, setTitle] = useState('Exam');
     const [variantCount, setVariantCount] = useState(1);
     const [preface, setPreface] = useState('');
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    const checkboxRef = useRef<HTMLInputElement>(null);
     const [isDownloadDisabled, setDownloadDisabled] = useState(true);
-
-    let isLogged = loginState.state.isLogged;
 
     const generateDocument = () => {
         if (iframeRef.current == null) return;
         setDownloadDisabled(true);
-        const flattenedTasks = tasks
-            .filter((_task, index) => taskSelection[index])
+        const flattenedTasks = pool
             .map((task, qIndex) => {
                 const answers = task.answers
                     .map((answer, aIndex) => `    ${indexToLetter(aIndex)}. ${answer.content}`)
@@ -32,7 +26,7 @@ export const Exams = () => {
                 return `${qIndex + 1}. ${task.content}    \n${answers}`;
             })
             .join('\n\n');
-        const quotedPreface = preface ? `> ${preface}` : '';
+        const quotedPreface = preface ? preface.split('\n').map(e => `> ${e}`).join('    \n') : '';
         const iframeDocument = iframeRef.current.contentWindow!.document;
         iframeDocument.write(`
             <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
@@ -48,7 +42,7 @@ export const Exams = () => {
 
 ${quotedPreface}
 
-${flattenedTasks}
+${flattenedTasks.length ? flattenedTasks : 'Add some tasks to the pool...'}
             </textarea>
             <img id="loader" src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif">
         `);
@@ -67,27 +61,21 @@ ${flattenedTasks}
         `);
     };
 
-    const onChangeSelection = (taskId: number, newSelected: boolean) => {
-        setTaskSelection(taskSelection.map((oldSelected, index) =>
-            tasks[index].id === taskId ? newSelected : oldSelected));
+    useEffect(generateDocument, [pool, title, preface]);
+
+    const poolIds = pool.map(e => e.id);
+
+    const taskSorter = (a: Task, b: Task) => a.id! === b.id! ? 0 : a.id! < b.id! ? -1 : 1;
+
+    const onTaskAction = (action: TaskAction, task: Task) => {
+        if (action === 'add' && poolIds.indexOf(task.id!) === -1)
+            setPool([...pool, task].sort(taskSorter));
+        if (action === 'remove' && poolIds.indexOf(task.id!) !== -1)
+            setPool(pool.filter(e => e.id! !== task.id!));
     };
 
-    useEffect(() => {
-        FetchAPI.getAllTasks().then(result => {
-            setTasks(result.map((task: any) => Task.fromJson(task)));
-            console.log(result.map((task: any) => Task.fromJson(task)));
-        });
-    }, []);
-    useEffect(() => {
-        setTaskSelection(tasks.map(() => true));
-    }, [tasks]);
-    useEffect(generateDocument, [tasks, taskSelection, title, preface]);
-    useEffect(() => {
-        if (checkboxRef.current == null) return;
-        checkboxRef.current.indeterminate = taskSelection.some(sel => sel) && taskSelection.some(sel => !sel);
-    }, [taskSelection]);
-
-    if (!isLogged) return (<div className="p-5">Log in to create exams.</div>);
+    if (!loginState.state.isLogged)
+        return (<div className="p-5">Log in to create exams.</div>);
     return (
         <>
             <div className="bg-light bg-gradient p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>
@@ -113,24 +101,10 @@ ${flattenedTasks}
                     </FormGroup>
                     <Button variant="primary" onClick={downloadDocument} disabled={isDownloadDisabled}>Download generated PDF</Button>
                 </Form>
+                <p className="h5">Current pool:</p>
+                <TaskListing chosenTasks={pool} tasks={pool} onTaskAction={onTaskAction} />
                 <p className="h5">Choose tasks:</p>
-                <Table hover className="w-100" style={{ maxHeight: '100vh', overflow: 'auto' }}>
-                <thead>
-                    <tr>
-                        <th className="border-end" style={{ textAlign: "center", maxWidth: '40px' }}>
-                            <input ref={checkboxRef} type="checkbox" checked={taskSelection.every(sel => sel)}
-                                onChange={evt => setTaskSelection(taskSelection.map(sel => evt.target.checked))} />
-                        </th>
-                        <th>Task</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tasks.map((task, index) => (
-                        <SelectableTaskRow key={task.id} task={task} selected={taskSelection[index]}
-                            onChangeSelection={onChangeSelection} />
-                    ))}
-                </tbody>
-                </Table>
+                <SearchWithResults chosenTasks={pool} chosenTasksVisibility={false} onTaskAction={onTaskAction} />
             </div>
             <div className="border border-dark border-2" style={{ flexBasis: '50%' }}>
                 <iframe title="pdf-preview" ref={iframeRef} className="d-block w-100 h-100"></iframe>
