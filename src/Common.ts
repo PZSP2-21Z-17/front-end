@@ -6,7 +6,7 @@ export const undefinedOf = <T>(obj: T) => undefined as unknown as T;
 
 export const refresh = () => window.location.reload();
 
-export const addToDict = (dict: any, dictSetter: any, key: any, value: any) => dictSetter({...dict, [key]: value});
+export const addToDict = (dictSetter: any, dict: any, key: any, value: any) => dictSetter({...dict, [key]: value});
 export const setDict = (dictSetter: any, object: any) => dictSetter(object);
 
 export const addToArray = (arraySetter: any, array: any, object: any) => arraySetter([...array, object]);

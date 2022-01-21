@@ -19,16 +19,16 @@ export default function TaskAdder(props: TaskAdderProps) {
     const taskEditorCallback = {
         setAnswerCount: (count: number) => {
             if (editedTask.answers.length > count)
-                addToDict(editedTask, setEditedTask, 'answers', editedTask.answers.slice(0, count));
+                addToDict(setEditedTask, editedTask, 'answers', editedTask.answers.slice(0, count));
             else if (editedTask.answers.length < count)
-                addToDict(editedTask, setEditedTask, 'answers', editedTask.answers.concat(new Array(count - editedTask.answers.length).fill(undefined).map(() => new Answer())));
+                addToDict(setEditedTask, editedTask, 'answers', editedTask.answers.concat(new Array(count - editedTask.answers.length).fill(undefined).map(() => new Answer())));
         },
         updateAnswer: (index: number, newAnswer: Answer) => {
             let newAnswers = editedTask.answers.map((oldAnswer, i) => i !== index ? oldAnswer : newAnswer);
-            addToDict(editedTask, setEditedTask, 'answers', newAnswers);
+            addToDict(setEditedTask, editedTask, 'answers', newAnswers);
         },
         updateContent: (newContent: string) => {
-            addToDict(editedTask, setEditedTask, 'content', newContent);
+            addToDict(setEditedTask, editedTask, 'content', newContent);
         }
     };
 
