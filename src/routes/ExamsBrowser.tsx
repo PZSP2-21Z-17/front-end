@@ -37,13 +37,23 @@ export default function ExamBrowser() {
             });
     };
 
+    const removeExam = (examId: number) => {
+        setTitle('');
+        setPreface('');
+        setTaskList([]);
+        FetchAPI.deleteExam(examId)
+            .then(() => {
+                setExamList(examList.filter(e => e.exam_id !== examId));
+            });
+    };
+
     if (!loginState.state.isLogged)
         return (<div className="p-5">Log in to create exams.</div>);
     return (
         <>
             <div className="bg-light bg-gradient p-3" style={{ flexBasis: '50%', overflow: 'auto' }}>
                 <p className="h2">Exam browsing</p>
-                <ExamListing exams={examList} onGroupClick={updateGroupPreview} />
+                <ExamListing exams={examList} onGroupClick={updateGroupPreview} onRemoveExam={removeExam} />
             </div>
             <ExamPreview title={title} preface={preface} tasks={taskList} defaultContent="Choose an exam group for preview." />
         </>
