@@ -1,7 +1,7 @@
 import User from "./entities/User";
 import Subject from "./entities/Subject";
 import Tag from "./entities/Tag";
-import Task from "./entities/Task";
+import Task, { FetchedTask } from "./entities/Task";
 
 export type TaskSearchCriteria = {
     subjectCode?: Subject['subject_id'];
@@ -26,7 +26,8 @@ export default class FetchAPI {
             searchParams.append('search_string', criteria.searchString);
         if (criteria.pageOffset !== undefined)
             searchParams.append('offset', criteria.pageOffset.toString());
-        return fetchData(`/task/find/?${searchParams.toString()}`, 'GET');
+        return fetchData(`/task/find/?${searchParams.toString()}`, 'GET')
+            .then(async data => data.map((e: { Task: FetchedTask, in_use: boolean }) => e.Task));
     };
     static getTaskSearchTips = (criteria: TaskSearchTipCriteria) => {
         let searchParams = new URLSearchParams();
