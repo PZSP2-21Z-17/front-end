@@ -4,7 +4,7 @@ import Tag from "./entities/Tag";
 import Task from "./entities/Task";
 
 export type TaskSearchCriteria = {
-    subjectCode?: Subject['subject_code'];
+    subjectCode?: Subject['subject_id'];
     tagIds: Tag['tag_id'][];
     searchString?: string;
     pageOffset?: number;
@@ -38,7 +38,7 @@ export default class FetchAPI {
     };
     static getSubjects = () => fetchData('subject/all/', 'GET');
     static getTags = () => fetchData('tag/all/', 'GET');
-    static getUserLogged = () => fetchData('user/is_logged/', 'GET');
+    static getUserLogged = () => fetchData('user/is_logged/', 'GET')
 
     static postUserLogout = () => fetchData('user/logout', 'POST');
     static postUserLogin = (user: User) => fetchData('user/login/', 'POST', user);
@@ -48,6 +48,7 @@ export default class FetchAPI {
     static postTaskCreate = (task: Task) => fetchData('task/create_with_answers/', 'POST', task.toJson());
 
     static deleteTag = (tag: Tag) => fetchData('tag/delete/', 'DELETE', {tag_id: tag.tag_id});
+    static deleteSubject = (subject: Subject) => fetchData('subject/delete/', 'DELETE', {subject_code: subject.subject_id});
 }
 
 export function fetchData(url: string, method: string = 'GET', payload?: {}) {

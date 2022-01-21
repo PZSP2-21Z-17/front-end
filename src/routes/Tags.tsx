@@ -53,9 +53,7 @@ export const Tags: FunctionComponent<TagsProps> = () => {
         FetchAPI.deleteTag(tag).then(() => {
             let newTagList = tagList.filter((other: Tag) => tag.tag_id !== other.tag_id);
             setTagList(newTagList);
-        }).catch(
-            // 403
-        )
+        })
     }
 
     const generateButton = (tag: Tag) => {
