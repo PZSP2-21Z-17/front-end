@@ -28,7 +28,7 @@ export default function Tasks() {
         return <p>Log in to create tasks.</p>;
 
     return <>
-        <SearchWithResults />
+        <SearchWithResults allowDeletion />
         <TaskAdder onSubmit={handleTaskSubmit} />
     </>;
 }
