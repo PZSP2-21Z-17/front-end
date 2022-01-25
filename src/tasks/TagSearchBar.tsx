@@ -117,7 +117,7 @@ export default function TagSearchBar(props: TagSearchBarProps) {
 
     return (
         <div className="d-flex mb-2">
-            <AsyncSelect<ColoredOption, true> isDisabled={props.isDisabled}
+            <AsyncSelect<ColoredOption, true> isDisabled={props.isDisabled} placeholder="Select tags..."
                 isMulti defaultOptions loadOptions={updateHints} className="me-2 flex-grow-1"
                 styles={colorSelectStyles} value={currentValue} onChange={handleChange} />
             <Button variant="primary" type="submit" disabled={props.isDisabled} onClick={handleSubmit}>
