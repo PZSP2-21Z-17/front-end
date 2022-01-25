@@ -8,6 +8,7 @@ import { addToDict } from '../Common';
 import TagSearchBar from './TagSearchBar';
 import Subject from '../entities/Subject';
 import { setArray } from '../Common';
+import ExamPreview from '../exams/ExamPreview';
 
 type TaskAdderProps = {
     onSubmit?: (addedTask: Task) => void;
@@ -70,33 +71,34 @@ export default function TaskAdder(props: TaskAdderProps) {
     }
     
     return (
-        <Form onSubmit={handleSubmit}>
+        <>
+            <p className="h2">Task creation</p>
+            <Form onSubmit={handleSubmit}>
+                <Form.Select className="mb-2" onChange={e => addToDict(setEditedTask, editedTask, 'subject_code', e.target.value)}>
+                    <option>Select subject</option>
+                    {generateSubjectSelect}
+                </Form.Select>
+                <TagSearchBar onSubmit={updateSearchResults} />
+                <Form.Check className="mb-2" label="Public task" onChange={e => editPrivacy(e.target.checked)} />
 
-            <Form.Select className="mb-2" onChange={e => addToDict(setEditedTask, editedTask, 'subject_code', e.target.value)}>
-                <option>Select subject</option>
-                {generateSubjectSelect}
-            </Form.Select>
-            <TagSearchBar onSubmit={updateSearchResults} />
-            <Form.Check className="mb-2" label="Public task" onChange={e => editPrivacy(e.target.checked)} />
-
-            <Form.Group as={Row} className="mb-3" controlId="formTaskName">
-                <Form.Label column sm={2}>Task content</Form.Label>
-                <Col sm={9}>
-                    <Form.Control type="text" value={editedTask.content} className="mb-2" onChange={(evt: any) => taskEditorCallback.updateContent(evt.target.value)} />
-                </Col>
-                <Form.Label column sm={2}>Answers</Form.Label>
-                <Col sm={9}>
-                    {editedTask.answers.map((answer, index) => (
-                        <AnswerEditor key={index} index={index} answer={answer} answerChangeHandler={taskEditorCallback.updateAnswer} />
-                    ))}
-                    <Button className="me-3" onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length + 1)}>Add answer</Button>
-                    <Button disabled={editedTask.answers.length < 1} onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length - 1)}>Remove answer</Button>
-                </Col>
-            </Form.Group>
-        </Form>
+                <Form.Group as={Row} className="mb-3" controlId="formTaskName">
+                    <Form.Label column sm={2}>Task content</Form.Label>
+                    <Col sm={9}>
+                        <Form.Control as="textarea" className="mb-2" placeholder="You can use HTML, LaTeX and Markdown here!"
+                            value={editedTask.content} onChange={(evt: any) => taskEditorCallback.updateContent(evt.target.value)} />
+                    </Col>
+                    <Form.Label column sm={2}>Answers</Form.Label>
+                    <Col sm={9}>
+                        {editedTask.answers.map((answer, index) => (
+                            <AnswerEditor key={index} index={index} answer={answer} answerChangeHandler={taskEditorCallback.updateAnswer} />
+                        ))}
+                        <Button className="me-3" onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length + 1)}>Add answer</Button>
+                        <Button disabled={editedTask.answers.length < 1} onClick={() => taskEditorCallback.setAnswerCount(editedTask.answers.length - 1)}>Remove answer</Button>
+                    </Col>
+                </Form.Group>
+            </Form>
+            <p className="h4">Preview:</p>
+            <ExamPreview tasks={[editedTask]} disableButtons />
+        </>
     );
 }
-
-//<Button className="mb-3" type="submit" variant="primary">
-//Submit new task
-//</Button>
