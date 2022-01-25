@@ -9,11 +9,14 @@ type SearchWithResultsProps = {
     chosenTasks?: Task[];
     chosenTasksVisibility?: boolean;
     onTaskAction?: TaskActionFunc;
+    allowDeletion?: boolean;
 };
 
 export default function SearchWithResults(props: SearchWithResultsProps) {
     const loginState = useContext(LoginContext);
     const [searchResults, setSearchResults] = useState([] as Task[]);
+
+    const { allowDeletion, ...passedProps } = props;
 
     const updateSearchResults = (options?: SubmittedOption[]) => {
         if (!loginState.state.isLogged)
@@ -32,8 +35,13 @@ export default function SearchWithResults(props: SearchWithResultsProps) {
 
     useEffect(updateSearchResults, [loginState.state.isLogged]);
 
+    const deleteTask = (taskId: number) => {
+        FetchAPI.deleteTask(taskId)
+            .then(() => updateSearchResults());
+    };
+
     return (<>
         <SearchBar onSubmit={updateSearchResults} />
-        <TaskListing tasks={searchResults} {...props} />
+        <TaskListing tasks={searchResults} {...passedProps} onClickDelete={allowDeletion ? deleteTask : undefined} />
     </>);
 }

@@ -35,7 +35,7 @@ export default class FetchAPI {
         if (criteria.pageOffset !== undefined)
             searchParams.append('offset', criteria.pageOffset.toString());
         return fetchData(`/task/find/?${searchParams.toString()}`, 'GET')
-            .then(async data => data.map((e: { Task: FetchedTask, in_use: boolean }) => e.Task));
+            .then(async data => data.map((e: { Task: FetchedTask, in_use: boolean }) => ({ ...e.Task, in_use: e.in_use })));
     };
     static getTaskSearchTips = (criteria: TaskSearchTipCriteria) => {
         let searchParams = new URLSearchParams();
@@ -64,6 +64,7 @@ export default class FetchAPI {
     static deleteTag = (tag: Tag) => fetchData('tag/delete/', 'DELETE', {tag_id: tag.tag_id});
     static deleteSubject = (subject: Subject) => fetchData('subject/delete/', 'DELETE', {subject_code: subject.subject_id});
     static deleteExam = (examId: number) => fetchData('exam/delete/', 'POST', { exam_id: examId });
+    static deleteTask = (taskId: number) => fetchData('task/delete/', 'POST', { task_id: taskId });
 }
 
 export function fetchData(url: string, method: string = 'GET', payload?: {}) {

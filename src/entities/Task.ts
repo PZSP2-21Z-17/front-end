@@ -7,6 +7,7 @@ export type FetchedTask = {
     content: string;
     date_creation: string;
     is_visible: string;
+    in_use: boolean;
     score: number;
     subject_code?: string;
     task_id?: number;
@@ -20,14 +21,16 @@ export class Task {
     tags: Tag[];
     subject_code: string;
     is_visible: string;
+    in_use: boolean;
 
-    constructor(id?: number, content: string = '', answers: Answer[] = [], subject_code = '', is_visible='N') {
+    constructor(id?: number, content: string = '', answers: Answer[] = [], subject_code = '', is_visible='N', in_use=false) {
         this.id = id;
         this.content = content;
         this.answers = answers;
         this.tags = [];
         this.subject_code = subject_code;
-        this.is_visible = is_visible
+        this.is_visible = is_visible;
+        this.in_use = in_use;
     }
 
     toJson = () => {
@@ -39,7 +42,8 @@ export class Task {
             score: 1,
             subject_code: this.subject_code,
             //author_id: 1,
-            tags: this.tags
+            tags: this.tags,
+            in_use: this.in_use
         } as FetchedTask;
     }
 
@@ -47,6 +51,7 @@ export class Task {
         let task = new Task();
         task.id = json.task_id;
         task.content = json.content;
+        task.in_use = json.in_use;
         task.answers = json.answers.map(fetchedAnswer => Answer.fromJson(fetchedAnswer));
         return task;
     }
