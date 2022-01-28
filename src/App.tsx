@@ -28,11 +28,15 @@ export const App = () => {
     }
 
     useEffect(() => {
-        FetchAPI.getUserLogged().then(
-            (json: any) => {
+        FetchAPI.getUserLogged()
+            .then((json: any) => {
                 setLoginStateUsername(json.e_mail);
-                setLoginStateIsLogged(true);}
-        )
+                setLoginStateIsLogged(true);
+            })
+            .catch(() => {
+                setLoginStateUsername(null);
+                setLoginStateIsLogged(false);
+            });
     }, []);
 
     const loginProvider = {
