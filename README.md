@@ -1,5 +1,7 @@
 # Front end
 
+Node.js LTS version is required to run/build the project.
+
 ---
 
 # Getting Started with Create React App
