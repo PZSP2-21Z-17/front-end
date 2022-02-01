@@ -30,8 +30,8 @@ export const ExamsCreator = () => {
 
     const generateGroups = () => {
         FetchAPI.postExamGenerate({
-            description: title,
-            content: preface,
+            content: title,
+            description: preface,
             task_ids: poolIds,
             group_count: groupCount,
             tasks_per_exam: tasksPerGroup

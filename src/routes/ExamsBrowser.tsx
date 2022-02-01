@@ -30,8 +30,8 @@ export default function ExamBrowser() {
         FetchAPI.getExamGroup(examId, groupNo)
             .then((data: ExamGroup) => {
                 const soughtExam = examList.filter(e => e.exam_id === examId)[0];
-                setTitle(soughtExam.description);
-                setPreface(soughtExam.content);
+                setTitle(soughtExam.content);
+                setPreface(soughtExam.description);
                 setTaskList(data.task_affs.sort((a, b) => gSortPred(a, b, 'nr_on_sheet'))
                     .map(e => Task.fromJson(e.tasks)));
             });
