@@ -1,4 +1,5 @@
 import { ListGroup, Accordion, Button } from "react-bootstrap";
+import Answer from "../entities/Answer";
 import Task from "../entities/Task";
 
 export type TaskAction = 'add' | 'remove';
@@ -29,6 +30,14 @@ export default function TaskListing(props: TaskListingProps) {
         return (<Button variant="danger" onClick={() => props.onClickDelete!(task.id!)}>X</Button>);
     };
 
+    const generateAnswer = (answer: Answer) => {
+        return (
+            <ListGroup.Item key={answer.id} className={ answer.isCorrect ? 'fw-bold bg-success bg-opacity-10' : '' }>
+                {answer.content}
+            </ListGroup.Item>
+        );
+    }
+
     return (
         <Accordion className="mb-3">
             {props.tasks.filter(e => (props.chosenTasksVisibility ?? true) || chosenTaskIds.indexOf(e.id!) === -1)
@@ -37,13 +46,14 @@ export default function TaskListing(props: TaskListingProps) {
                         {generateActionButton(task)}
                         <Accordion.Item className="flex-grow-1" eventKey={task.id!.toString()}>
                             <Accordion.Header>
-                                <span>{task.id}. {task.content}</span>
+                                <span style={{ wordBreak: 'break-word', userSelect: 'text', cursor: 'text', display: 'contents' }}
+                                    onClick={evt => evt.stopPropagation()}>
+                                    {task.id}. {task.content}
+                                </span>
                             </Accordion.Header>
-                            <Accordion.Body>
-                                <ListGroup>
-                                    {task.answers.map(answer => (
-                                        <ListGroup.Item key={answer.id}>{answer.content}</ListGroup.Item>
-                                    ))}
+                            <Accordion.Body className="p-0">
+                                <ListGroup variant="flush">
+                                    {task.answers.map(answer => generateAnswer(answer))}
                                 </ListGroup>
                             </Accordion.Body>
                         </Accordion.Item>
