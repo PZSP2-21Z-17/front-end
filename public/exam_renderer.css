@@ -1,0 +1,80 @@
+div#root {
+    visibility: hidden;
+    max-width: 40em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#loader {
+    border: 0.5em solid lightgray;
+    border-radius: 50%;
+    border-top: 0.5em solid dodgerblue;
+    width: 3em;
+    height: 3em;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Texme 'plain' style */
+/* source: https://github.com/susam/texme/raw/main/texme.js */
+
+body {
+    color: #333;
+    line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+    margin: 1em 0 0.5em 0;
+    line-height: 1.2;
+}
+
+img {
+    max-width: 100%;
+}
+
+pre, code, samp, kbd {
+    color: #009;
+    font-family: monospace,monospace;
+}
+
+pre, blockquote {
+    background: #eee;
+    padding: 0.5em;
+}
+
+pre {
+    overflow: auto;
+}
+
+blockquote {
+    border-left: medium solid #ccc;
+    margin: 1em 0;
+}
+
+blockquote :first-child {
+    margin-top: 0;
+}
+
+blockquote :last-child {
+    margin-bottom: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border: thin solid #999;
+    padding: 0.3em 0.4em;
+    text-align: left;
+}

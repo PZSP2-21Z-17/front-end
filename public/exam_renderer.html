@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/exam_renderer.css">
+        <title>Exam renderer</title>
+        <script>
+            window.MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                },
+                startup: {
+                    typeset: false
+                }
+            };
+
+            window.texme = {
+                style: 'plain',
+                useMathJax: false,
+                renderOnLoad: false
+            };
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
+            integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/texme@1.0.0"></script>
+        <script>
+            window.isInProgress = (function() {
+                let value = false;
+
+                return {
+                    get: () => value,
+                    set: (newValue) => {
+                        if (value === newValue || typeof(newValue) !== 'boolean')
+                            return;
+                        value = newValue;
+                        const loader = document.querySelector('div#loader');
+                        const root = document.querySelector('div#root');
+                        loader.style.display = newValue ? 'block' : 'none';
+                        root.style.visibility = newValue ? 'hidden': 'visible';
+                    }
+                }
+            })();
+
+            window.render = async function(text) {
+                const root = document.querySelector('div#root');
+                window.isInProgress.set(true);
+                MathJax.typesetClear();
+                root.innerHTML = texme.render(text);
+                await MathJax.typesetPromise([root]);
+                window.isInProgress.set(false);
+            }
+
+            window.save = function(filename) {
+                filename = filename ? filename.replaceAll(/[<>:"/\\|?*]/g, '_') : 'exam';
+                const html = document.body.parentNode;
+                const opt = {
+                    html2canvas: {
+                        useCORS: true,
+                        scale: 8
+                    },
+                    pagebreak: {
+                        avoid: ['li', 'blockquote', 'p', 'img']
+                    }
+                };
+                scrollTo(0, 0);
+                return html2pdf()
+                    .set(opt)
+                    .from(html)
+                    .save(filename);
+            }
+        </script>
+    </head>
+    <body>
+        <div id="loader"></div>
+        <div id="root"></div>
+    </body>
+</html>
